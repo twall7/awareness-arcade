@@ -414,6 +414,7 @@ h2.q{font-size:clamp(21px,2.4vw,27px);line-height:1.2;letter-spacing:-.02em;font
 <script>
 /* ============ CONFIG: edit these ============ */
 const CONFIG = {
+  shareUrl:   'https://awareness-arcade.vercel.app/',   // link people get when they copy their score
   toolkitUrl: 'https://www.adaptivesecurity.com/cybersecurity-awareness-month',
   demoUrl:    'https://www.adaptivesecurity.com/demo',            // placeholder: point at your demo or campaign landing page
   campaignEnd: '2026-10-31T23:59:59',
@@ -670,7 +671,7 @@ $('#dlBtn').href=CONFIG.toolkitUrl;$('#demoBtn').href=CONFIG.demoUrl;
 $('#copyBtn').addEventListener('click',async()=>{
   const rk=RANKS.find(r=>state.score<=r.max).t;
   const sq=ROUNDS.map((_,i)=>state.results[i]?'\u{1F7E9}':'\u{1F7E5}').join('');
-  const txt=`I scored ${state.score}/8 on Adaptive\u2019s Awareness Arcade (${rk}).\n${sq}\nThink your instincts survive the AI era? Try it. ${CONFIG.toolkitUrl}`;
+  const txt=`I scored ${state.score}/8 on Adaptive\u2019s Awareness Arcade (${rk}).\n${sq}\nThink your instincts survive the AI era? Try it. ${CONFIG.shareUrl}`;
   try{await navigator.clipboard.writeText(txt);toast('Score copied. Go brag.')}catch(e){toast(txt)}
 });
 document.addEventListener('keydown',e=>{
