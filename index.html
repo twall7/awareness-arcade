@@ -218,6 +218,7 @@ h2.q{font-size:clamp(21px,2.4vw,27px);line-height:1.2;letter-spacing:-.02em;font
 .bubble small{color:var(--paper-mute);display:block;margin-bottom:2px}
 .tr-l{display:grid;grid-template-columns:78px 1fr;gap:12px;padding:9px 0;border-bottom:1px solid var(--paper-line)}
 .tr-l:last-child{border:0}
+.revealed .tr-l .tellrow{margin-bottom:44px;align-self:start}
 .tr-l .who{font:500 11px var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--paper-mute);padding-top:3px}
 .callhd{display:flex;justify-content:space-between;color:var(--paper-mute);font:11px var(--mono);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
 .log-row{display:grid;grid-template-columns:54px 1fr;gap:12px;padding:9px 0;border-bottom:1px solid var(--paper-line)}
@@ -506,7 +507,7 @@ const ROUNDS = [
    exhibit:()=>`<div class="paper"><div class="callhd"><span>Help desk &middot; inbound</span><span>Caller ID: unknown</span></div>
      <div class="tr-l"><span class="who">Caller</span><span>Hi, it’s Dana from Finance. I’m locked out and I have a board meeting in ten minutes. Please help!</span></div>
      <div class="tr-l"><span class="who">You</span><span>Can I get your employee ID?</span></div>
-     <div class="tr-l"><span class="who">Caller</span><span>Ugh, it’s on my badge at home. But my manager is Priya Raman, I started in March, and I just got back from the Denver offsite. <span data-tell="Public details are not proof of identity">I even posted about the new standing desk.</span></span></div>
+     <div class="tr-l"><span class="who">Caller</span><span class="tellrow" data-tell="Public details are not proof of identity">Ugh, it’s on my badge at home. But my manager is Priya Raman, I started in March, and I just got back from the Denver offsite. I even posted about the new standing desk.</span></div>
      <div class="tr-l"><span class="who">Caller</span><span>Honestly, if you can’t help I’ll have to tell the VP you blocked the board prep.</span></div></div>`,
    opts:[
      {t:'Reset it. They know the company',ok:0},
