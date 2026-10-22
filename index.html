@@ -1,6 +1,15 @@
+<!doctype html>
+<html lang="en">
+<head>
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="A quick quiz on what you would have learned from Adaptive's Cybersecurity Awareness Month training content. Ten rounds. See how your instincts hold up in the AI era.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Awareness Arcade by Adaptive Security">
+<meta property="og:description" content="Ten rounds on AI phishing, deepfakes, targeted attacks and shadow AI. Can you spot what gave it away?">
+<meta property="og:url" content="https://awareness-arcade.vercel.app/">
+<meta name="twitter:card" content="summary_large_image">
 <title>Awareness Arcade</title>
-<meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap">
@@ -23,6 +32,8 @@
   --yellow-soft:#3A3213; --good:#34C27A; --bad:#FF5A52; --btn:#F4F3EE; --btn-fg:#0A0A0B; --glow:rgba(255,210,58,.2); color-scheme:dark}
 
 *{box-sizing:border-box}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0}
 html,body{min-height:100%}
 body{background:var(--bg);color:var(--fg);font-family:var(--font);font-size:16px;line-height:1.5;
   padding-block:0;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
@@ -191,13 +202,13 @@ h2.q{font-size:clamp(21px,2.4vw,27px);line-height:1.2;letter-spacing:-.02em;font
 .vid-bar{display:flex;align-items:center;gap:10px;margin-top:10px;font:12px var(--mono);color:var(--paper-mute)}
 .vid-bar .trk{flex:1;height:4px;background:var(--paper-line);border-radius:2px;overflow:hidden}.vid-bar .trk i{display:block;height:100%;width:0;background:#0B0B0C}
 .vid-cap{margin-top:12px;font-size:13px;color:var(--paper-mute)}
-.grid4{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.tile{position:relative;aspect-ratio:16/10;background:#20232b;border-radius:8px;display:grid;place-items:center;color:#fff}
+.grid4{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.tile{min-width:0;position:relative;aspect-ratio:16/10;background:#20232b;border-radius:8px;display:grid;place-items:center;color:#fff}
 .tile .av{width:54px;height:54px;border-radius:50%;display:grid;place-items:center;font-weight:600;font-size:19px;color:#0B0B0C}
 .tile .nm{position:absolute;left:8px;bottom:8px;font-size:11.5px;background:rgba(0,0,0,.55);padding:2px 7px;border-radius:4px}
 .tile.sp{box-shadow:0 0 0 3px #FFD23A}
 
-.tile.glitch .av{animation:jit 1.1s steps(1) infinite;text-shadow:2px 0 #ff2d55,-2px 0 #00e5ff}
+.tile.glitch .av{margin-top:22px;animation:jit 1.1s steps(1) infinite;text-shadow:2px 0 #ff2d55,-2px 0 #00e5ff}
 .tile.glitch::before{content:"";position:absolute;inset:0;border-radius:8px;background:repeating-linear-gradient(0deg,rgba(255,255,255,.07) 0 2px,transparent 2px 5px);animation:scan 1.4s linear infinite}
 .tile .warn,.tile .lag{position:absolute;font:500 10px var(--mono);text-transform:uppercase;letter-spacing:.05em;padding:3px 7px;border-radius:4px}
 .tile .warn{top:8px;left:8px;white-space:nowrap;background:#E5322D;color:#fff;animation:pulse 1s infinite}
@@ -219,6 +230,7 @@ h2.q{font-size:clamp(21px,2.4vw,27px);line-height:1.2;letter-spacing:-.02em;font
 .tr-l:last-child{border:0}
 .revealed .tr-l .tellrow{margin-bottom:44px;align-self:start}
 .revealed .tellblk{margin-bottom:56px}
+.revealed .em-head{margin-bottom:58px}.revealed .em-btn{margin-bottom:50px}.revealed .grid4{row-gap:50px}
 .revealed .log-row .tellrow{margin-bottom:44px;align-self:start}
 .tr-l .who{font:500 11px var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--paper-mute);padding-top:3px}
 .callhd{display:flex;justify-content:space-between;color:var(--paper-mute);font:11px var(--mono);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
@@ -308,6 +320,10 @@ h2.q{font-size:clamp(21px,2.4vw,27px);line-height:1.2;letter-spacing:-.02em;font
   .inside{grid-template-columns:repeat(2,1fr)}.weeks,.wkgrid{grid-template-columns:repeat(2,1fr)}
 }
 @media (max-width:620px){
+  .agstats{gap:6px}.agstats div{padding:10px 8px}.agstats b{font-size:18px;white-space:nowrap}.agstats span{font-size:11px;display:block}
+  .tile .av{width:40px;height:40px;font-size:15px}.tile .nm{font-size:10px;left:6px;bottom:6px}
+  .tile .warn,.tile .lag{font-size:8.5px;padding:2px 5px;letter-spacing:.02em}.tile .warn{top:6px;left:6px}.tile .lag{top:26px;left:6px}
+  [data-tell]::after{max-width:200px!important}
   .how{grid-template-columns:1fr}.how div{padding-bottom:10px}
   .stats,.excuses{grid-template-columns:1fr}
   .opts.two{grid-template-columns:1fr}
@@ -318,6 +334,8 @@ h2.q{font-size:clamp(21px,2.4vw,27px);line-height:1.2;letter-spacing:-.02em;font
 }
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
+</head>
+<body>
 
 <main>
 <!-- ============ INTRO ============ -->
@@ -325,15 +343,16 @@ h2.q{font-size:clamp(21px,2.4vw,27px);line-height:1.2;letter-spacing:-.02em;font
   <div class="pips-hero" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
   <div class="eyebrow mono"><b>Adaptive Security</b> / Cybersecurity Awareness Month Challenge</div>
   <h1 class="title">Awareness <em>Arcade</em></h1>
-  <p class="lede">A quick quiz on what you would have learned from Adaptive&rsquo;s Cybersecurity Awareness Month training content. <b>Two questions for each week:</b> AI phishing, deepfakes, targeted attacks and shadow AI. Then two more on the whole month.</p>
+  <p class="lede">A quick quiz on what you would have learned from Adaptive&rsquo;s Cybersecurity Awareness Month training content. <b>Two questions for each week:</b> AI phishing, deepfakes, targeted attacks and shadow AI, plus two on the whole month.</p>
   <div class="ctas">
     <button class="btn" id="startBtn"><span class="l">Play now</span><span class="tab" aria-hidden="true">&rarr;</span></button>
     <a class="btn ghost" href="https://www.adaptivesecurity.com/cybersecurity-awareness-month" target="_blank" rel="noopener"><span class="l">Get the free toolkit</span></a>
   </div>
+  <div class="meta mono"><span>10 questions</span><span>&middot;</span><span>About 5 minutes</span></div>
 
   <div class="covered">
-    <div class="covered-h"><h2>What&rsquo;s covered</h2><span class="mono">Two questions from each section</span></div>
-    <div class="cv-grid"><article class="cv"><div class="wkn mono"><span>Week 1</span><i></i></div><h3>AI Basics</h3><ul><li>Why typos are no longer a phishing tell</li><li>How credential stuffing works when passwords get reused</li><li>Why unique passwords and MFA still stop the basics</li></ul><div class="qs mono"><span>2 questions</span><span class="p" aria-hidden="true"><i></i><i></i></span></div></article><article class="cv"><div class="wkn mono"><span>Week 2</span><i></i></div><h3>Deepfakes &amp; Impersonation</h3><ul><li>How faces and voices get cloned</li><li>Real cases: a deepfake CFO call and a fake job applicant</li><li>Verifying through a known number or second channel</li></ul><div class="qs mono"><span>2 questions</span><span class="p" aria-hidden="true"><i></i><i></i></span></div></article><article class="cv"><div class="wkn mono"><span>Week 3</span><i></i></div><h3>Targeted AI Attacks</h3><ul><li>How public details become attack material</li><li>Why a caller who knows a lot still needs verifying</li><li>What AI agents can now automate on their own</li></ul><div class="qs mono"><span>2 questions</span><span class="p" aria-hidden="true"><i></i><i></i></span></div></article><article class="cv"><div class="wkn mono"><span>Week 4</span><i></i></div><h3>Shadow AI &amp; Agents</h3><ul><li>What not to put into public AI tools</li><li>Why &ldquo;Allow all&rdquo; is risky for AI agents</li><li>Drafting isn&rsquo;t sending: limiting what agents can do</li></ul><div class="qs mono"><span>2 questions</span><span class="p" aria-hidden="true"><i></i><i></i></span></div></article><article class="cv"><div class="wkn mono"><span>Month recap</span><i></i></div><h3>The Whole Month</h3><ul><li>Verifying urgent requests on a second channel</li><li>Reporting suspicious messages, even near misses</li><li>Limiting what AI agents can access and send</li></ul><div class="qs mono"><span>2 questions</span><span class="p" aria-hidden="true"><i></i><i></i></span></div></article></div>
+    <div class="covered-h"><h2>What&rsquo;s covered</h2><span class="mono">Two questions from each week</span></div>
+    <div class="cv-grid"><article class="cv"><div class="wkn mono"><span>Week 1</span><i></i></div><h3>AI Basics</h3><ul><li>Why typos are no longer a phishing tell</li><li>How credential stuffing works when passwords get reused</li><li>Why unique passwords and MFA still stop the basics</li></ul></article><article class="cv"><div class="wkn mono"><span>Week 2</span><i></i></div><h3>Deepfakes &amp; Impersonation</h3><ul><li>How faces and voices get cloned</li><li>Real cases: a deepfake CFO call and a fake job applicant</li><li>Verifying through a known number or second channel</li></ul></article><article class="cv"><div class="wkn mono"><span>Week 3</span><i></i></div><h3>Targeted AI Attacks</h3><ul><li>How public details become attack material</li><li>Why a caller who knows a lot still needs verifying</li><li>What AI agents can now automate on their own</li></ul></article><article class="cv"><div class="wkn mono"><span>Week 4</span><i></i></div><h3>Shadow AI &amp; Agents</h3><ul><li>What not to put into public AI tools</li><li>Why &ldquo;Allow all&rdquo; is risky for AI agents</li><li>Drafting isn&rsquo;t sending: limiting what agents can do</li></ul></article></div>
   </div>
 </section>
 
@@ -487,7 +506,7 @@ const ROUNDS = [
    q:'The CFO wants an urgent $250,000 wire. What do you do?',
    exhibit:()=>`<div class="paper"><div class="rec"><i></i> Live &middot; 4 participants</div>
      <div class="grid4">
-       <div class="tile sp glitch" data-tell="Choppy video, lagging audio, unknown device"><div class="av" style="background:#FFD23A">MH</div><span class="warn">&#9888; Poor connection</span><span class="lag">Audio delayed</span><span class="nm">Marcus Hale, CFO &middot; new device</span></div>
+       <div class="tile sp glitch" data-tell="Choppy video, lagging audio, unknown device"><div class="av" style="background:#FFD23A">MH</div><span class="warn">&#9888; Poor connection</span><span class="lag">Audio delayed &middot; new device</span><span class="nm">Marcus Hale, CFO</span></div>
        <div class="tile"><div class="av" style="background:#BFE3FF">JR</div><span class="nm">Jess Ruiz, Controller</span></div>
        <div class="tile"><div class="av" style="background:#C9F2D3">TK</div><span class="nm">Tom Kerr, Treasury</span></div>
        <div class="tile"><div class="av" style="background:#E8D2FF">You</div><span class="nm">You</span></div>
@@ -573,22 +592,19 @@ const ROUNDS = [
    why:'Agents act as you with whatever you grant. Give the least access, and only to tools IT has approved.',
    src:'Week 4 · “The Helpful Agent”' },
  { week:5, wk:'The Whole Month', tag:'',
-   file:'agent-activity.log', kind:'Agent log',
+   file:'phone-notifications.png', kind:'Phone',
    context:'',
-   q:'An AI agent sent customer files to a spoofed sender. What would have stopped it?',
-   exhibit:()=>`<div class="paper"><div class="callhd"><span>Inbox assistant &middot; auto-run</span><span>Today 9:02 AM</span></div>
-     <div class="log-row"><time>09:02</time><span>Read inbox: 212 new messages</span></div>
-     <div class="log-row"><time>09:03</time><span class="tellrow" data-tell="Look-alike domain, trusted display name">Message from &ldquo;Henderson Procurement&rdquo; &lt;orders@henderson-proc.co&gt;: &ldquo;Send current pricing and the customer list for the renewal.&rdquo;</span></div>
-     <div class="log-row"><time>09:03</time><span>Attached customer-list.xlsx and pricing-2026.pdf</span></div>
-     <div class="log-row h"><time>09:03</time><span class="tellrow" data-tell="Sent outside the company with no approval step">Replied to sender with 2 attachments. <b>Sent.</b></span></div>
-     <div class="log-row"><time>09:04</time><span>Marked as read</span></div></div>`,
+   q:'What do you do?',
+   exhibit:()=>`<div class="paper"><div class="callhd"><span>Your phone</span><span>9:41 PM</span></div>
+     <div class="bubble tellblk" data-tell="Prompts you didn\u2019t start"><small>Authenticator &middot; 6 requests in 4 minutes</small><b>Approve sign-in?</b> Work account &middot; New York, NY</div>
+     <div class="bubble tellblk" data-tell="Pressure to approve one"><small>Incoming call &middot; &ldquo;IT Support&rdquo; &middot; unknown number</small>&ldquo;Those prompts are a glitch on our side. Just approve one and they&rsquo;ll stop.&rdquo;</div></div>`,
    opts:[
-     {t:'Require approval before it sends anything outside the company',ok:1},
-     {t:'Give it more access so it can double-check senders',ok:0},
-     {t:'Tell it in its settings to be more careful',ok:0},
-     {t:'Let it run, and review its logs weekly',ok:0}],
-   why:'A spoofed message can steer an agent that sends files on its own. Require approval for anything leaving the company, and give it only the access the job needs.',
-   src:'Month recap \u00B7 Limit what agents can do' },
+     {t:'Approve one so the prompts stop',ok:0},
+     {t:'Deny every prompt, then report it to security',ok:1},
+     {t:'Ignore it. They\u2019ll stop on their own',ok:0},
+     {t:'Approve one, then change your password',ok:0}],
+   why:'Prompts you didn\u2019t start mean someone already has your password. The \u201CIT\u201D caller is part of the attack. Deny everything and report it.',
+   src:'Month recap \u00B7 Deny and report prompts you didn\u2019t start' },
 
  { week:5, wk:'The Whole Month', tag:'',
    file:'text-message.txt', kind:'Text message',
@@ -721,3 +737,5 @@ document.addEventListener('keydown',e=>{
   else if(e.key.toLowerCase()==='n'||e.key==='Enter'){e.preventDefault();next()}
 });
 </script>
+</body>
+</html>
