@@ -1,0 +1,686 @@
+<meta charset="utf-8">
+<title>Awareness Arcade</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a one-screen arcade cabinet. Intro -> 8 rounds (exhibit window left, call-it panel right) -> score + CTA. */
+:root{
+  --bg:#FAFAF7; --fg:#0B0B0C; --muted:#6C6B66; --line:#E2E1DA; --card:#FFFFFF;
+  --yellow:#FFD23A; --yellow-soft:#FFF3C2; --good:#12924F; --bad:#E5322D;
+  --btn:#0B0B0C; --btn-fg:#FFFFFF; --glow:rgba(255,210,58,.5);
+  --paper:#FFFFFF; --paper-ink:#141414; --paper-mute:#6b6b66; --paper-line:#DAD9D2; --paper-fill:#F2F1EC;
+  --term-bg:#101215; --term-fg:#C9D1D9; --term-mute:#6E7781;
+  --font:'Geist',ui-sans-serif,system-ui,-apple-system,'Segoe UI',sans-serif;
+  --mono:'Geist Mono',ui-monospace,'SF Mono',Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0A0A0B; --fg:#F4F3EE; --muted:#9A9992; --line:#26262A; --card:#131316;
+  --yellow-soft:#3A3213; --good:#34C27A; --bad:#FF5A52; --btn:#F4F3EE; --btn-fg:#0A0A0B; --glow:rgba(255,210,58,.2); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0A0A0B; --fg:#F4F3EE; --muted:#9A9992; --line:#26262A; --card:#131316;
+  --yellow-soft:#3A3213; --good:#34C27A; --bad:#FF5A52; --btn:#F4F3EE; --btn-fg:#0A0A0B; --glow:rgba(255,210,58,.2); color-scheme:dark}
+
+*{box-sizing:border-box}
+html,body{min-height:100%}
+body{background:var(--bg);color:var(--fg);font-family:var(--font);font-size:16px;line-height:1.5;
+  padding-block:0;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  -webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--fg);outline-offset:3px;border-radius:6px}
+.mono{font-family:var(--mono);text-transform:uppercase;letter-spacing:.08em;font-size:12px}
+.wrap{max-width:1200px;margin:0 auto}
+.screen[hidden]{display:none!important}
+.dim{color:var(--muted)}
+
+/* ---------- buttons ---------- */
+.btn{display:inline-flex;align-items:stretch;background:var(--btn);color:var(--btn-fg);border:0;border-radius:12px;padding:0;text-decoration:none;font-weight:500;font-size:17px;overflow:hidden;transition:transform .15s}
+.btn span.l{padding:15px 22px;display:flex;align-items:center;gap:8px}
+.btn span.tab{background:var(--yellow);color:#0B0B0C;width:52px;display:grid;place-items:center;margin:5px 5px 5px 0;border-radius:8px}
+.btn:hover{transform:translateY(-2px)}
+.btn.ghost{background:transparent;color:var(--fg);box-shadow:inset 0 0 0 1.5px var(--fg)}
+.btn.ghost span.l{padding:15px 24px}
+.btn.sm span.l{padding:12px 18px;font-size:15px}
+.btn.sm span.tab{width:42px}
+
+/* ---------- intro ---------- */
+.intro{position:relative;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding-block:56px 40px;overflow:hidden}
+.intro::before{content:"";position:absolute;left:50%;top:-8%;width:min(1100px,160vw);height:560px;transform:translateX(-50%);
+  background:radial-gradient(closest-side,var(--glow),transparent);pointer-events:none;filter:blur(10px);animation:drift 9s ease-in-out infinite alternate}
+.intro::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;
+  background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+  background-size:56px 56px;-webkit-mask-image:radial-gradient(ellipse at 50% 40%,#000 0%,transparent 70%);mask-image:radial-gradient(ellipse at 50% 40%,#000 0%,transparent 70%)}
+.intro>*{position:relative;z-index:1}
+@keyframes drift{to{transform:translateX(-46%) translateY(14px)}}
+.pips-hero{display:flex;gap:10px;margin-bottom:26px}
+.pips-hero i{width:12px;height:12px;background:var(--fg);border-radius:2px;opacity:.9;animation:blink 3.2s infinite}
+.pips-hero i:nth-child(1){animation-delay:0s}.pips-hero i:nth-child(2){animation-delay:.4s}.pips-hero i:nth-child(3){animation-delay:.8s}.pips-hero i:nth-child(4){animation-delay:1.2s}
+.pips-hero i:nth-child(5){animation-delay:1.6s}.pips-hero i:nth-child(6){animation-delay:2s}.pips-hero i:nth-child(7){animation-delay:2.4s}.pips-hero i:nth-child(8){animation-delay:2.8s}
+@keyframes blink{0%,12%{background:var(--yellow);opacity:1;transform:scale(1.25)}20%,100%{background:var(--fg);opacity:.9;transform:none}}
+.eyebrow{color:var(--muted);margin-bottom:22px}
+.eyebrow b{color:var(--fg);font-weight:500}
+h1.title{font-weight:600;font-size:clamp(52px,12vw,150px);line-height:.92;letter-spacing:-.045em;margin:0 0 28px;text-wrap:balance}
+h1.title em{font-style:normal;color:var(--muted);opacity:.75}
+.lede{max-width:640px;font-size:clamp(17px,2.2vw,21px);color:var(--muted);margin:0 0 34px;text-wrap:pretty}
+.lede b{color:var(--fg);font-weight:500}
+.ctas{display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
+.meta{margin-top:26px;color:var(--muted);opacity:.85;display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+.how{display:grid;grid-template-columns:repeat(3,1fr);gap:0;width:100%;max-width:1100px;margin-top:64px;text-align:left;border-top:1px dashed var(--line)}
+.how div{padding:22px 24px 0 0}
+.how .mono{color:var(--muted)}
+.how h3{margin:8px 0 6px;font-size:20px;font-weight:500}
+.how p{margin:0;color:var(--muted);font-size:15px;max-width:30ch}
+.dl-pill{display:inline-flex;gap:8px;align-items:center;padding:6px 12px;border:1px solid var(--line);border-radius:999px;background:var(--card);margin-bottom:22px;font-size:12px}
+.dl-pill i{width:7px;height:7px;border-radius:50%;background:var(--bad);animation:pulse 1.6s infinite}
+@keyframes pulse{50%{opacity:.3}}
+
+
+/* intro: what's covered */
+.covered{width:100%;max-width:1100px;margin-top:72px;text-align:left;border-top:1px dashed var(--line);padding-top:28px}
+.covered-h{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:20px}
+.covered-h h2{margin:0;font-size:clamp(26px,3.6vw,38px);font-weight:600;letter-spacing:-.03em}
+.covered-h .mono{color:var(--muted)}
+.cv-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.cv{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 18px 16px;display:flex;flex-direction:column;gap:10px;transition:transform .2s,border-color .2s}
+.cv:hover{transform:translateY(-3px);border-color:var(--fg)}
+.cv .wkn{display:flex;align-items:center;justify-content:space-between;color:var(--muted)}
+.cv .wkn i{width:10px;height:10px;border-radius:2px;background:var(--yellow);box-shadow:0 0 0 1.5px var(--fg)}
+.cv h3{margin:0;font-size:22px;font-weight:600;letter-spacing:-.02em;line-height:1.15}
+.cv .tg{margin:0;color:var(--muted);font-size:14.5px}
+.cv ul{margin:4px 0 0;padding:0;list-style:none;display:grid;gap:8px;font-size:14.5px}
+.cv li{display:grid;grid-template-columns:10px 1fr;gap:10px;align-items:start}
+.cv li::before{content:"";width:6px;height:6px;margin-top:8px;background:var(--fg);border-radius:1px}
+.cv .qs{margin-top:auto;padding-top:14px;border-top:1px dashed var(--line);display:flex;align-items:center;justify-content:space-between;color:var(--muted)}
+.cv .qs span.p{display:flex;gap:5px}.cv .qs span.p i{width:12px;height:12px;border-radius:2px;border:1.5px solid var(--fg)}
+@media (max-width:1000px){.cv-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:560px){.cv-grid{grid-template-columns:1fr}}
+
+/* ---------- play ---------- */
+.play{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;padding-block:18px 28px}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-bottom:14px;border-bottom:1px dashed var(--line);margin-bottom:16px}
+.quit{background:none;border:0;color:var(--muted);padding:6px 0}
+.quit:hover{color:var(--fg)}
+.brand{font-weight:600;letter-spacing:-.02em;display:flex;align-items:center;gap:8px}
+.brand i{width:10px;height:10px;background:var(--yellow);border-radius:2px;box-shadow:0 0 0 1.5px var(--fg)}
+.score{color:var(--muted)}.score b{color:var(--fg);font-weight:500}
+.cab{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);border:1px solid var(--line);border-radius:14px;background:var(--card);overflow:clip;flex:1}
+.win{border-right:1px solid var(--line);display:flex;flex-direction:column;min-width:0}
+.win-bar{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);min-width:0}
+.win-bar .fn{font-family:var(--mono);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.win-bar .kind{margin-left:auto;color:var(--muted);white-space:nowrap}
+.chip{border:1px solid var(--line);border-radius:6px;padding:3px 8px;color:var(--muted);white-space:nowrap}
+.stage{flex:1;padding:22px;display:flex;justify-content:center;align-items:flex-start;background:var(--bg);overflow:auto;min-height:420px}
+.paper{background:var(--paper);color:var(--paper-ink);border-radius:8px;box-shadow:0 1px 0 var(--paper-line),0 18px 40px -22px rgba(0,0,0,.35);width:100%;max-width:640px;padding:26px;font-size:14px;line-height:1.55}
+.paper b{font-weight:600}
+.side{display:flex;flex-direction:column;min-width:0}
+.sec{padding:20px 24px;border-bottom:1px solid var(--line)}
+.sec:last-child{border-bottom:0}
+.rhead{display:flex;align-items:center;justify-content:space-between;gap:12px;color:var(--muted)}
+.wk{color:var(--muted)}
+.wk b{color:var(--fg);font-weight:500}
+.tagline{font-size:15px;color:var(--muted);margin:6px 0 0}
+.pips{display:flex;gap:6px;align-items:center}
+.pips i{width:12px;height:12px;border-radius:2px;border:1.5px solid var(--line);transition:background .25s,border-color .25s}
+.pips i:nth-child(2n){margin-right:6px}
+.pips.sq i{width:18px;height:18px;margin:0!important}
+.pips i:nth-child(8){margin-right:0}
+.pips i.cur{border-color:var(--fg);animation:pulse 1.4s infinite}
+.pips i.ok{background:var(--good);border-color:var(--good)}
+.pips i.no{background:var(--bad);border-color:var(--bad)}
+.ctx{margin-top:16px;border-left:2px solid var(--fg);background:var(--paper-fill);background:color-mix(in srgb,var(--fg) 5%,transparent);padding:14px 16px;border-radius:0 8px 8px 0}
+.ctx .mono{color:var(--muted);display:block;margin-bottom:6px}
+.ctx p{margin:0;font-size:16px}
+h2.q{font-size:clamp(21px,2.4vw,27px);line-height:1.2;letter-spacing:-.02em;font-weight:500;margin:0 0 16px;text-wrap:balance}
+.opts{display:grid;gap:10px;margin:0;padding:0;list-style:none}
+.opt{width:100%;text-align:left;display:grid;grid-template-columns:28px 1fr;gap:12px;align-items:start;background:transparent;border:1.5px solid var(--fg);border-radius:10px;padding:13px 14px;transition:background .15s,transform .15s,border-color .15s;font-size:15.5px;line-height:1.35}
+.opt:hover:not(:disabled){background:color-mix(in srgb,var(--yellow) 28%,transparent);transform:translateX(3px)}
+.opt .k{font-family:var(--mono);font-size:12px;border:1px solid var(--line);border-radius:5px;display:grid;place-items:center;height:24px;color:var(--muted)}
+.opt:disabled{cursor:default;opacity:.55;border-color:var(--line)}
+.opt.right{opacity:1;border-color:var(--good);background:color-mix(in srgb,var(--good) 12%,transparent)}
+.opt.right .k{background:var(--good);color:#fff;border-color:var(--good)}
+.opt.wrong{opacity:1;border-color:var(--bad);background:color-mix(in srgb,var(--bad) 10%,transparent)}
+.opt.wrong .k{background:var(--bad);color:#fff;border-color:var(--bad)}
+.opts.two{grid-template-columns:1fr 1fr}
+.opts.two .opt{grid-template-columns:1fr;font-weight:500;font-size:17px;text-align:center;padding:16px}
+.opts.two .opt .k{display:none}
+
+.verdict{display:flex;align-items:center;gap:14px;animation:rise .35s ease both}
+.verdict .badge{width:46px;height:46px;border-radius:8px;display:grid;place-items:center;color:#fff;font-size:26px;flex:none}
+.verdict .badge.ok{background:var(--good)}.verdict .badge.no{background:var(--bad)}
+.verdict h3{margin:0;font-size:26px;font-weight:500;letter-spacing:-.02em}
+.verdict h3 small{font-size:14px;color:var(--good);margin-left:6px;font-weight:500}
+.verdict p{margin:0}
+.reveal{animation:rise .4s .08s ease both}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.why h4{font-weight:500;margin:0 0 6px;color:var(--muted)}
+.why p{margin:0 0 10px;font-size:16px}
+.src{display:inline-flex;gap:8px;align-items:center;color:var(--muted);border:1px solid var(--line);border-radius:6px;padding:5px 9px}
+.src i{width:6px;height:6px;border-radius:50%;background:var(--yellow);box-shadow:0 0 0 1px var(--fg)}
+.nextrow{padding:14px 24px calc(14px + env(safe-area-inset-bottom,0px));position:sticky;bottom:0;background:var(--card);border-top:1px solid var(--line);z-index:6}
+.vbar.ok{background:color-mix(in srgb,var(--good) 10%,transparent)}.vbar.no{background:color-mix(in srgb,var(--bad) 9%,transparent)}
+.side>#nextSlot{margin-top:auto;position:sticky;bottom:0;z-index:6}
+.kbd{font-family:var(--mono);font-size:11px;border:1px solid currentColor;border-radius:4px;padding:1px 6px;opacity:.7}
+
+/* tells: red rings drawn on reveal, like the evidence circles */
+[data-tell]{position:relative}
+.revealed [data-tell]{outline:2px solid var(--bad);outline-offset:4px;border-radius:6px;animation:ring .5s ease both}
+.revealed [data-tell]::after{content:attr(data-tell);position:absolute;left:0;top:calc(100% + 10px);z-index:5;width:max-content;max-width:230px;white-space:normal;
+  background:var(--bad);color:#fff;font:500 11px/1.3 var(--mono);text-transform:uppercase;letter-spacing:.05em;padding:5px 9px;border-radius:6px;text-align:left}
+@keyframes ring{from{outline-offset:18px;outline-color:transparent}}
+
+/* ---------- exhibits ---------- */
+.em-head{display:flex;gap:12px;align-items:center;padding-bottom:14px;border-bottom:1px solid var(--paper-line);margin-bottom:14px}
+.em-av{width:38px;height:38px;border-radius:50%;background:#D9ECFF;color:#0B5CAD;display:grid;place-items:center;font-weight:600;flex:none}
+.em-head small{color:var(--paper-mute);font-size:12px}
+.em-time{margin-left:auto;color:var(--paper-mute);font-size:12px;align-self:flex-start}
+.em-sub{font-weight:600;font-size:17px;margin-bottom:12px}
+.em-btn{display:inline-block;background:#0B63CE;color:#fff;padding:10px 18px;border-radius:4px;font-weight:600;margin:6px 0 4px}
+.em-foot{color:var(--paper-mute);font-size:12px;margin-top:14px;border-top:1px solid var(--paper-line);padding-top:10px}
+.term{background:var(--term-bg);color:var(--term-fg);font-family:var(--mono);font-size:12.5px;line-height:1.7;padding:0;overflow:hidden}
+.term .bar{display:flex;gap:6px;padding:10px 14px;border-bottom:1px solid #22262c}.term .bar i{width:10px;height:10px;border-radius:50%;background:#2c313a}
+.term pre{margin:0;padding:16px 18px;white-space:pre-wrap;word-break:break-word;font:inherit}
+.term .m{color:var(--term-mute)}.term .y{color:#FFD23A}.term .r{color:#FF7B72}.term .g{color:#56D364}
+.vid-frame{position:relative;aspect-ratio:16/9;background:linear-gradient(160deg,#2a2d36,#14161b);border-radius:8px;overflow:hidden;display:grid;place-items:center}
+.vid-frame .head{position:absolute;bottom:-6%;left:50%;transform:translateX(-50%);width:34%;aspect-ratio:1/1.15;border-radius:48% 48% 40% 40%;background:linear-gradient(#5b5f6b,#3a3d47)}
+.vid-frame .body{position:absolute;bottom:-34%;left:50%;transform:translateX(-50%);width:68%;aspect-ratio:1.4/1;border-radius:50% 50% 0 0;background:#2f323b}
+.vid-frame .scan{position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(255,255,255,.05) 0 2px,transparent 2px 5px);animation:scan 6s linear infinite}
+@keyframes scan{to{background-position:0 100px}}
+.vid-frame video,.vid-frame img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.vid-play{position:relative;z-index:2;width:68px;height:68px;border-radius:50%;background:var(--yellow);border:0;color:#0B0B0C;font-size:24px;display:grid;place-items:center;padding-left:4px}
+.vid-ph{position:absolute;left:12px;top:12px;z-index:2;background:rgba(0,0,0,.6);color:#FFD23A;font:500 10px var(--mono);letter-spacing:.08em;padding:5px 8px;border-radius:4px;text-transform:uppercase}
+.vid-bar{display:flex;align-items:center;gap:10px;margin-top:10px;font:12px var(--mono);color:var(--paper-mute)}
+.vid-bar .trk{flex:1;height:4px;background:var(--paper-line);border-radius:2px;overflow:hidden}.vid-bar .trk i{display:block;height:100%;width:0;background:#0B0B0C}
+.vid-cap{margin-top:12px;font-size:13px;color:var(--paper-mute)}
+.grid4{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tile{position:relative;aspect-ratio:16/10;background:#20232b;border-radius:8px;display:grid;place-items:center;color:#fff}
+.tile .av{width:54px;height:54px;border-radius:50%;display:grid;place-items:center;font-weight:600;font-size:19px;color:#0B0B0C}
+.tile .nm{position:absolute;left:8px;bottom:8px;font-size:11.5px;background:rgba(0,0,0,.55);padding:2px 7px;border-radius:4px}
+.tile.sp{box-shadow:0 0 0 3px #FFD23A}
+
+.tile.glitch .av{animation:jit 1.1s steps(1) infinite;text-shadow:2px 0 #ff2d55,-2px 0 #00e5ff}
+.tile.glitch::before{content:"";position:absolute;inset:0;border-radius:8px;background:repeating-linear-gradient(0deg,rgba(255,255,255,.07) 0 2px,transparent 2px 5px);animation:scan 1.4s linear infinite}
+.tile .warn,.tile .lag{position:absolute;font:500 10px var(--mono);text-transform:uppercase;letter-spacing:.05em;padding:3px 7px;border-radius:4px}
+.tile .warn{top:8px;left:8px;white-space:nowrap;background:#E5322D;color:#fff;animation:pulse 1s infinite}
+.tile .lag{top:32px;left:8px;background:rgba(0,0,0,.6);color:#FFD23A}
+@keyframes jit{0%{transform:translate(0,0)}18%{transform:translate(5px,-2px) skewX(6deg)}22%{transform:translate(-4px,1px)}55%{transform:translate(0,0)}58%{transform:translate(3px,2px) scaleY(.94)}62%{transform:translate(0,0)}}
+
+.agstats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.agstats div{background:var(--paper-fill);border-radius:8px;padding:12px}
+.agstats b{display:block;font-size:24px;font-weight:600;letter-spacing:-.03em;width:fit-content}
+.agstats b[data-tell]::after{left:auto;right:0;top:calc(100% + 26px)}
+.agstats span{font-size:12px;color:var(--paper-mute)}
+.agrow{border-top:1px solid var(--paper-line);padding:11px 0;display:grid;grid-template-columns:1fr auto;gap:2px 10px}
+.agrow span{font:11px var(--mono);color:var(--paper-mute);text-transform:uppercase;letter-spacing:.05em;align-self:center}
+.agrow p{grid-column:1/-1;margin:2px 0 0;font-size:13.5px;width:fit-content;max-width:100%}
+.rec{display:flex;align-items:center;gap:6px;font:500 11px var(--mono);color:var(--paper-mute);margin-bottom:10px}.rec i{width:8px;height:8px;border-radius:50%;background:#E5322D}
+.bubble{margin-top:12px;background:var(--paper-fill);border-radius:8px;padding:12px 14px}
+.bubble small{color:var(--paper-mute);display:block;margin-bottom:2px}
+.tr-l{display:grid;grid-template-columns:78px 1fr;gap:12px;padding:9px 0;border-bottom:1px solid var(--paper-line)}
+.tr-l:last-child{border:0}
+.tr-l .who{font:500 11px var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--paper-mute);padding-top:3px}
+.callhd{display:flex;justify-content:space-between;color:var(--paper-mute);font:11px var(--mono);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+.log-row{display:grid;grid-template-columns:54px 1fr;gap:12px;padding:9px 0;border-bottom:1px solid var(--paper-line)}
+.log-row:last-child{border:0}.log-row time{font:12px var(--mono);color:var(--paper-mute);padding-top:2px}
+.log-row.h{background:#FFF6D1;margin:0 -10px;padding:9px 10px;border-radius:4px}
+.cmp-top{display:flex;gap:8px;align-items:center;font-weight:600;margin-bottom:12px}.cmp-top i{width:18px;height:18px;border-radius:5px;background:linear-gradient(135deg,#9b6cff,#ff7ab8)}
+.cmp-top small{margin-left:auto;font-weight:400;color:var(--paper-mute)}
+.you{margin-left:auto;max-width:86%;background:#EDEBFF;border-radius:12px 12px 2px 12px;padding:10px 14px;width:fit-content}
+.file{display:flex;gap:10px;align-items:center;border:1px solid var(--paper-line);border-radius:8px;padding:10px 12px;margin:10px 0 10px auto;width:fit-content;max-width:100%}
+.file b{display:block;font-size:13px}.file small{color:#C2261F;font:500 11px var(--mono);letter-spacing:.06em}
+.file .ic{width:32px;height:38px;border-radius:4px;background:#F4D9D7;display:grid;place-items:center;font:600 10px var(--mono);color:#C2261F}
+.dlg h5{margin:0 0 4px;font-size:17px;font-weight:600}
+.dlg .app{display:flex;gap:10px;align-items:center;margin-bottom:14px}.dlg .app i{width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,#ffd23a,#ff8a3a);display:block}
+.perm{display:flex;gap:10px;align-items:center;padding:9px 0;border-top:1px solid var(--paper-line)}.perm span.c{width:18px;height:18px;border-radius:4px;background:#0B63CE;color:#fff;display:grid;place-items:center;font-size:12px;flex:none}
+.dbtns{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+.dbtns span{padding:10px 16px;border-radius:6px;font-weight:600;font-size:14px}
+.dbtns .a{background:#0B63CE;color:#fff}.dbtns .b{border:1px solid var(--paper-line)}
+
+/* ---------- results ---------- */
+.res{padding-block:36px 80px}
+.res-hero{position:relative;text-align:center;padding:48px 0 40px;overflow:hidden}
+.res-hero::before{content:"";position:absolute;left:50%;top:-30%;width:min(900px,150vw);height:420px;transform:translateX(-50%);background:radial-gradient(closest-side,var(--glow),transparent);pointer-events:none}
+.res-hero>*{position:relative}
+.big{font-size:clamp(88px,22vw,230px);font-weight:600;letter-spacing:-.06em;line-height:.9;font-variant-numeric:tabular-nums}
+.big small{font-size:.28em;color:var(--muted);letter-spacing:-.02em;margin-left:.1em}
+.rank{display:inline-block;background:var(--yellow);color:#0B0B0C;font-weight:600;font-size:clamp(18px,3vw,26px);padding:6px 16px;border-radius:8px;margin:18px 0 10px;transform:rotate(-1.5deg)}
+.rank-sub{color:var(--muted);font-size:18px;max-width:46ch;margin:0 auto 24px}
+.wkgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:8px 0 12px}
+.wkc{border:1px solid var(--line);border-radius:12px;padding:16px;background:var(--card)}
+.wkc .n{font-size:30px;font-weight:500;letter-spacing:-.03em;margin:6px 0 8px;font-variant-numeric:tabular-nums}
+.wkc .p{display:flex;gap:5px}.wkc .p i{height:6px;flex:1;border-radius:3px;background:var(--line)}.wkc .p i.ok{background:var(--good)}.wkc .p i.no{background:var(--bad)}
+.wkc.weak{box-shadow:inset 0 0 0 2px var(--yellow)}
+.wkc p{margin:10px 0 0;color:var(--muted);font-size:13.5px}
+.actions{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:8px}
+.cta{margin-top:0;border-radius:20px;background:var(--bg);color:var(--fg);padding:clamp(40px,6vw,72px) 0 0;position:relative;overflow:hidden}
+.cta::before{content:"";position:absolute;right:-120px;top:-120px;width:460px;height:460px;background:radial-gradient(closest-side,var(--glow),transparent);pointer-events:none}
+.cta>*{position:relative}
+.cta .mono{color:var(--muted);display:block;margin-bottom:14px}
+.cta h2{font-size:clamp(34px,6vw,72px);line-height:1;letter-spacing:-.04em;font-weight:600;margin:0 0 18px;max-width:16ch;text-wrap:balance}
+.cta h2 u{text-decoration:none;background:linear-gradient(transparent 62%,var(--yellow) 62%);color:inherit;padding:0 .05em}
+.cta .sub{font-size:clamp(17px,2vw,21px);max-width:58ch;opacity:.8;margin:0 0 28px}
+.excuses{display:grid;grid-template-columns:repeat(2,1fr);gap:0 36px;margin:36px 0 0;padding:0;list-style:none;border-top:1px solid color-mix(in srgb,var(--bg) 22%,transparent)}
+.excuses li{padding:14px 0;border-bottom:1px solid color-mix(in srgb,var(--bg) 22%,transparent);display:flex;gap:12px;font-size:16px}
+.excuses li s{opacity:.55}.excuses .mono{margin:0;color:var(--yellow);flex:none;padding-top:3px}
+
+.ans{margin-top:20px;border-radius:20px;background:var(--fg);color:var(--bg);padding:clamp(24px,4vw,48px)}
+.ans h3{font-size:clamp(26px,3.6vw,40px);font-weight:600;letter-spacing:-.03em;margin:0 0 6px}
+.ans>p{margin:0 0 22px;opacity:.7}
+.ans .rv{background:transparent;border-color:color-mix(in srgb,var(--bg) 22%,transparent)}
+.ans .rv em{color:var(--bg);opacity:.6}
+.block{margin-top:56px}
+
+.block.kit{background:var(--fg);color:var(--bg);border-radius:20px;padding:clamp(24px,4vw,48px)}
+.block.kit>p{color:var(--bg);opacity:.7}
+.block.kit .inside div{background:transparent;border-color:color-mix(in srgb,var(--bg) 22%,transparent)}
+.block.kit .inside span{color:var(--bg);opacity:.7}
+.block>h3{font-size:clamp(26px,3.6vw,40px);font-weight:600;letter-spacing:-.03em;margin:0 0 6px}
+.block>p{color:var(--muted);margin:0 0 22px;max-width:60ch}
+.inside{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+.inside div{border:1px solid var(--line);background:var(--card);border-radius:12px;padding:18px 16px}
+.inside b{display:block;font-size:42px;font-weight:500;letter-spacing:-.04em;line-height:1;font-variant-numeric:tabular-nums}
+.inside span{color:var(--muted);font-size:14px}
+.weeks{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.weeks article{border:1px solid var(--line);border-radius:12px;padding:18px;background:var(--card);display:flex;flex-direction:column;gap:6px}
+.weeks h4{margin:0;font-size:19px;font-weight:500;letter-spacing:-.01em}
+.weeks p{margin:0;color:var(--muted);font-size:14.5px}
+.weeks .game{margin-top:auto;padding-top:12px;border-top:1px dashed var(--line);font-size:13px}
+.weeks .game b{font-weight:500}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.stats div{border-top:2px solid var(--fg);padding-top:12px}
+.stats b{font-size:clamp(34px,5vw,56px);font-weight:500;letter-spacing:-.04em;display:block;line-height:1.05}
+.stats span{color:var(--muted);font-size:14.5px;display:block;max-width:34ch}
+.stats small{display:block;margin-top:6px;color:var(--muted);opacity:.8;font:11px var(--mono);text-transform:uppercase;letter-spacing:.06em}
+.review{display:grid;gap:8px}
+.rv{display:grid;grid-template-columns:30px 1fr auto;gap:12px;align-items:center;border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:var(--card)}
+.rv .b{width:24px;height:24px;border-radius:5px;color:#fff;display:grid;place-items:center;font-size:14px}
+.rv .b.ok{background:var(--good)}.rv .b.no{background:var(--bad)}
+.rv span{font-size:15px}.rv em{font-style:normal;color:var(--muted);white-space:nowrap}
+.foot{margin-top:56px;padding-top:20px;border-top:1px dashed var(--line);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;color:var(--muted)}
+.toast{position:fixed;left:50%;bottom:max(24px,env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(20px);background:var(--fg);color:var(--bg);padding:10px 16px;border-radius:8px;opacity:0;pointer-events:none;transition:.25s;z-index:50;font-size:14px}
+.toast.on{opacity:1;transform:translateX(-50%)}
+
+@media (max-width:900px){
+  .cab{grid-template-columns:1fr}.win{border-right:0;border-bottom:1px solid var(--line)}
+  .stage{min-height:0;padding:16px 12px 40px}
+  .inside{grid-template-columns:repeat(2,1fr)}.weeks,.wkgrid{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:620px){
+  .how{grid-template-columns:1fr}.how div{padding-bottom:10px}
+  .stats,.excuses{grid-template-columns:1fr}
+  .opts.two{grid-template-columns:1fr}
+  .pips i{width:10px;height:10px}.pips{gap:4px}
+  .topbar .brand span{display:none}
+  .rv{grid-template-columns:30px 1fr}.rv em{grid-column:2}
+  .paper{padding:18px}
+}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+
+<main>
+<!-- ============ INTRO ============ -->
+<section class="screen intro" id="s-intro">
+  <div class="pips-hero" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+  <div class="eyebrow mono"><b>Adaptive Security</b> / Cybersecurity Awareness Month Challenge</div>
+  <h1 class="title">Awareness <em>Arcade</em></h1>
+  <p class="lede">A quick quiz on what you would have learned from Adaptive&rsquo;s Cybersecurity Awareness Month training content. <b>Two questions for each week:</b> AI phishing, deepfakes, targeted attacks and shadow AI.</p>
+  <div class="ctas">
+    <button class="btn" id="startBtn"><span class="l">Play now</span><span class="tab" aria-hidden="true">&rarr;</span></button>
+    <a class="btn ghost" href="https://www.adaptivesecurity.com/cybersecurity-awareness-month" target="_blank" rel="noopener"><span class="l">Get the free toolkit</span></a>
+  </div>
+
+  <div class="covered">
+    <div class="covered-h"><h2>What&rsquo;s covered</h2><span class="mono">Two questions from each week</span></div>
+    <div class="cv-grid"><article class="cv"><div class="wkn mono"><span>Week 1</span><i></i></div><h3>AI Basics</h3><p class="tg">AI didn&rsquo;t invent phishing. It just got better at it.</p><ul><li>Why typos are no longer a phishing tell</li><li>How credential stuffing works when passwords get reused</li><li>Why unique passwords and MFA still stop the basics</li></ul><div class="qs mono"><span>2 questions</span><span class="p" aria-hidden="true"><i></i><i></i></span></div></article><article class="cv"><div class="wkn mono"><span>Week 2</span><i></i></div><h3>Deepfakes &amp; Impersonation</h3><p class="tg">Seeing and hearing isn&rsquo;t believing anymore.</p><ul><li>How faces and voices get cloned</li><li>Real cases: a deepfake CFO call and a fake job applicant</li><li>Verifying through a known number or second channel</li></ul><div class="qs mono"><span>2 questions</span><span class="p" aria-hidden="true"><i></i><i></i></span></div></article><article class="cv"><div class="wkn mono"><span>Week 3</span><i></i></div><h3>Targeted AI Attacks</h3><p class="tg">AI agents research you before they attack.</p><ul><li>How public details become attack material</li><li>Why a caller who knows a lot still needs verifying</li><li>What AI agents can now automate on their own</li></ul><div class="qs mono"><span>2 questions</span><span class="p" aria-hidden="true"><i></i><i></i></span></div></article><article class="cv"><div class="wkn mono"><span>Week 4</span><i></i></div><h3>Shadow AI &amp; Agents</h3><p class="tg">Unapproved AI tools are a growing blind spot.</p><ul><li>What not to put into public AI tools</li><li>Why &ldquo;Allow all&rdquo; is risky for AI agents</li><li>Drafting isn&rsquo;t sending: limiting what agents can do</li></ul><div class="qs mono"><span>2 questions</span><span class="p" aria-hidden="true"><i></i><i></i></span></div></article></div>
+  </div>
+</section>
+
+<!-- ============ PLAY ============ -->
+<section class="screen play wrap" id="s-play" hidden>
+  <div class="topbar">
+    <button class="quit mono" id="quitBtn">( Esc ) Exit</button>
+    <div class="brand"><i></i><span>Awareness Arcade</span></div>
+    <div class="score mono">Score <b id="scoreNum">0</b></div>
+  </div>
+  <div class="cab">
+    <div class="win">
+      <div class="win-bar"><span class="chip mono" id="roundChip"></span><span class="fn" id="fileName"></span><span class="kind mono" id="kind"></span></div>
+      <div class="stage" id="stage"></div>
+    </div>
+    <div class="side" id="side"></div>
+  </div>
+</section>
+
+<!-- ============ RESULTS ============ -->
+<section class="screen res wrap" id="s-res" hidden>
+  <div class="res-hero">
+    <div class="mono dim">Final score</div>
+    <div class="big"><span id="rScore">0</span><small>/8</small></div>
+    <div class="rank" id="rRank"></div>
+    <p class="rank-sub" id="rSub"></p>
+    <div class="pips sq" id="sq" style="justify-content:center;margin:0 auto 22px"></div>
+    <div class="actions">
+      <button class="btn sm" id="copyBtn"><span class="l">Copy my score</span><span class="tab" aria-hidden="true">&#10697;</span></button>
+      <button class="btn sm ghost" id="againBtn"><span class="l">Play again</span></button>
+    </div>
+  </div>
+
+  <div class="wkgrid" id="wkgrid"></div>
+
+  <div class="ans">
+    <h3>Your answers</h3>
+    <p>Each question, and where it&rsquo;s covered in the campaign.</p>
+    <div class="review" id="review"></div>
+  </div>
+
+  <div class="cta">
+    <span class="mono">Free toolkit</span>
+    <h2>Run it with your own team.</h2>
+    <p class="sub">The full four-week campaign is free to download and available all at once, so you can start any week in any month. Employees learn to verify unusual requests, to question a familiar face or voice, and to think twice about what they paste into an AI tool.</p>
+    <div class="ctas" style="justify-content:flex-start">
+      <a class="btn" id="dlBtn" href="https://www.adaptivesecurity.com/cybersecurity-awareness-month" target="_blank" rel="noopener"><span class="l">Download the free toolkit</span><span class="tab" aria-hidden="true">&rarr;</span></a>
+      <a class="btn ghost" id="demoBtn" href="https://www.adaptivesecurity.com/demo" target="_blank" rel="noopener"><span class="l">See it in Adaptive</span></a>
+    </div>
+  </div>
+
+  <div class="block kit">
+    <h3>What&rsquo;s in the free toolkit</h3>
+    <p>Videos, posters, newsletters, emails and a rollout guide for all four weeks. No account or purchase required.</p>
+    <div class="inside">
+      <div><b>12</b><span>Videos</span></div>
+      <div><b>16</b><span>Poster designs</span></div>
+      <div><b>4</b><span>Weekly newsletters</span></div>
+      <div><b>5</b><span>Email templates</span></div>
+      <div><b>1</b><span>Implementation guide</span></div>
+    </div>
+  </div>
+
+  <div class="block">
+    <h3>Four weeks, one topic each</h3>
+    <p>The free download is English and doesn&rsquo;t include the games. Adaptive customers also get the four interactive games, assignment and reporting, and 39 platform languages.</p>
+    <div class="weeks">
+      <article><span class="mono dim">Week 1</span><h4>AI Basics</h4><p>Employees learn why old phishing tells fail and which basics still work.</p><div class="game mono"><b>In Adaptive</b> AI-Powered Attacks Trivia</div></article>
+      <article><span class="mono dim">Week 2</span><h4>Deepfakes &amp; Impersonation</h4><p>Employees learn to verify a request instead of trusting a face or voice.</p><div class="game mono"><b>In Adaptive</b> Deepfake Detection Game Show</div></article>
+      <article><span class="mono dim">Week 3</span><h4>Targeted AI Attacks</h4><p>Employees see how public details become attack material.</p><div class="game mono"><b>In Adaptive</b> Talk Your Way In</div></article>
+      <article><span class="mono dim">Week 4</span><h4>Shadow AI &amp; Agents</h4><p>Employees learn which tools, data and permissions are safe to use with AI.</p><div class="game mono"><b>In Adaptive</b> Prompt Patrol</div></article>
+    </div>
+  </div>
+
+  <div class="foot mono"><span>Adaptive Security &middot; Cybersecurity Awareness Month 2026</span></div>
+</section>
+<div class="toast" id="toast" role="status"></div>
+</main>
+
+<script>
+/* ============ CONFIG: edit these ============ */
+const CONFIG = {
+  toolkitUrl: 'https://www.adaptivesecurity.com/cybersecurity-awareness-month',
+  demoUrl:    'https://www.adaptivesecurity.com/demo',            // placeholder: point at your demo or campaign landing page
+  campaignEnd: '2026-10-31T23:59:59',
+  // Round 3 media. Drop in a data: URI or published file path for a real clip/image, then set the answer.
+  deepfake: { src: '', type: 'video', answer: 'fake', poster: '' } // answer: 'fake' or 'real'
+};
+
+/* ============ ROUNDS ============ */
+const ROUNDS = [
+ { week:1, wk:'AI Basics', tag:'AI didn’t invent phishing. It just got better at it.',
+   file:'inbox-message.eml', kind:'Email',
+   context:'You get this at 8:02 AM. It looks like every other IT notice, except it has no typos, no weird phrasing and a calm, helpful tone.',
+   q:'Which detail gives this email away?',
+   exhibit:()=>`<div class="paper">
+     <div class="em-head"><div class="em-av">M</div><div><b>Microsoft 365 Security</b><br><small data-tell="Look-alike domain: the “i” is a “1”">no-reply@m1crosoft-secure-login.com</small></div><div class="em-time">8:02 AM</div></div>
+     <div class="em-sub">Action required: your mailbox is almost full</div>
+     <p>Hi there,</p>
+     <p>We noticed your mailbox has reached 96% of its storage limit. To avoid any interruption to your email, please confirm your account within 24 hours so we can keep your service active.</p>
+     <span class="em-btn" data-tell="Button points to the same look-alike site">Keep my mailbox active</span>
+     <p style="margin-top:14px">Thank you for helping us keep your account secure.</p>
+     <div class="em-foot">Microsoft Corporation, One Microsoft Way, Redmond, WA</div></div>`,
+   opts:[
+     {t:'It has no typos',ok:0},
+     {t:'The sender and link aren’t Microsoft’s',ok:1},
+     {t:'It’s too polite to be real',ok:0},
+     {t:'The footer address',ok:0}],
+   why:'AI writes flawless emails, so good grammar proves nothing. Check who really sent it and where the link goes.',
+   src:'Week 1 · Poster: “The Typos Are Gone”' },
+
+ { week:1, wk:'AI Basics', tag:'AI didn’t invent phishing. It just got better at it.',
+   file:'auth-service.log', kind:'Server log',
+   context:'A streaming site gets breached. An employee used the same password there and at work. The next morning the security team sees this.',
+   q:'Attackers try one leaked email and password per account, across thousands of accounts. What is this attack called?',
+   exhibit:()=>`<div class="paper term"><div class="bar"><i></i><i></i><i></i></div><pre><span class="m">03:12:04 UTC</span> auth-service  <span class="y">WARN</span>  login rate spike
+<span class="m">03:12:04</span> attempts ........ 14,302 in 61 seconds
+<span class="m">03:12:04</span> unique emails ... 14,302
+<span class="m">03:12:04</span> attempts per email  <span class="y">1</span>
+<span class="m">03:12:04</span> credentials ..... <span class="r" data-tell="Pairs leaked from another site, tried once each">matches a leaked list</span>
+<span class="m">03:12:04</span> source IPs ...... 3,100 (residential)
+<span class="m">03:12:09</span> result ......... <span class="g">212 successful</span> / 14,090 failed
+<span class="m">03:12:09</span> mfa ............. <span class="g">enforced</span>: 31 accounts   <span class="r">not enforced</span>: 181 accounts
+<span class="m">03:12:10</span> <span class="y">ACTION</span> forced password reset queued for 212 users</pre></div>`,
+   opts:[
+     {t:'Credential stuffing',ok:1},{t:'Brute force',ok:0},{t:'Spear phishing',ok:0},{t:'SQL injection',ok:0}],
+   why:'Credential stuffing replays email and password pairs leaked from other sites, one try per account. Brute force is different: it makes many guesses at a single account. Stuffing works because people reuse passwords, so unique passwords and MFA stop it.',
+   src:'Week 1 · “Your Password vs. AI”' },
+
+ { week:2, wk:'Deepfakes & Impersonation', tag:'Seeing and hearing isn’t believing anymore.',
+   file:'candidate-intro-clip.mp4', kind:'Video',
+   context:'A video arrives from someone claiming to be a candidate, a colleague or an exec. Watch the clip, then decide.',
+   q:'Is this a deepfake?', binary:true,
+   exhibit:()=>{
+     const d=CONFIG.deepfake;
+     const media = d.src
+       ? (d.type==='image'?`<img src="${d.src}" alt="Clip still">`:`<video src="${d.src}" ${d.poster?`poster="${d.poster}"`:''} controls playsinline></video>`)
+       : `<div class="head"></div><div class="body"></div><div class="scan"></div><span class="vid-ph">Placeholder clip &middot; swap in your video</span><button class="vid-play" id="fakePlay" aria-label="Play clip">&#9654;</button>`;
+     return `<div class="paper"><div class="vid-frame">${media}</div>
+       <div class="vid-bar"><span id="vt">0:00</span><div class="trk"><i id="vtrk"></i></div><span>0:12</span></div>
+       <div class="vid-cap" data-tell="Reveal: replace this with what gave it away">Watch the mouth, the blinking, the lighting on the edges, and whether the voice matches.</div></div>`;
+   },
+   opts:[{t:'Real',v:'real'},{t:'Deepfake',v:'fake'}],
+   why:'PLACEHOLDER: replace this with the tell from your clip.',
+   src:'Week 2 · “Real or AI?”' },
+
+ { week:2, wk:'Deepfakes & Impersonation', tag:'Seeing and hearing isn’t believing anymore.',
+   file:'finance-urgent-call.mp4', kind:'Video call',
+   context:'You work in finance. You’re pulled into a video call with your CFO and two colleagues. Everyone looks right and sounds right.',
+   q:'The CFO wants an urgent $250,000 wire. What do you do?',
+   exhibit:()=>`<div class="paper"><div class="rec"><i></i> Live &middot; 4 participants</div>
+     <div class="grid4">
+       <div class="tile sp glitch" data-tell="Choppy video, lagging audio, unknown device"><div class="av" style="background:#FFD23A">MH</div><span class="warn">&#9888; Poor connection</span><span class="lag">Audio delayed</span><span class="nm">Marcus Hale, CFO &middot; new device</span></div>
+       <div class="tile"><div class="av" style="background:#BFE3FF">JR</div><span class="nm">Jess Ruiz, Controller</span></div>
+       <div class="tile"><div class="av" style="background:#C9F2D3">TK</div><span class="nm">Tom Kerr, Treasury</span></div>
+       <div class="tile"><div class="av" style="background:#E8D2FF">You</div><span class="nm">You</span></div>
+     </div>
+     <div class="bubble"><small>Marcus Hale, CFO</small>Sorry, my video keeps freezing, I’m on a new phone. Need a $250k wire to a new vendor today. It’s tied to a deal that hasn’t been announced, so keep it between us until it closes.</div></div>`,
+   opts:[
+     {t:'Send it. Others are on the call',ok:0},
+     {t:'Hang up and confirm on a known number',ok:1},
+     {t:'Ask them to wave, then send it',ok:0},
+     {t:'Wire half now, verify later',ok:0}],
+   why:'Arup lost about $25M to a call where everyone else was a deepfake. Verify with a number you already trust.',
+   src:'Week 2 · Poster: “Seeing Isn’t Believing”' },
+
+ { week:3, wk:'Targeted AI Attacks', tag:'AI agents research you before they attack.',
+   file:'helpdesk-call-0914.txt', kind:'Call transcript',
+   context:'You work the IT help desk. A caller is stressed, friendly and knows a lot. The voice sounds a little flat, but the line is bad.',
+   q:'What should the help desk do?',
+   exhibit:()=>`<div class="paper"><div class="callhd"><span>Help desk &middot; inbound</span><span>Caller ID: unknown</span></div>
+     <div class="tr-l"><span class="who">Caller</span><span>Hi, it’s Dana from Finance. I’m locked out and I have a board meeting in ten minutes. Please help!</span></div>
+     <div class="tr-l"><span class="who">You</span><span>Can I get your employee ID?</span></div>
+     <div class="tr-l"><span class="who">Caller</span><span>Ugh, it’s on my badge at home. But my manager is Priya Raman, I started in March, and I just got back from the Denver offsite. <span data-tell="Public details are not proof of identity">I even posted about the new standing desk.</span></span></div>
+     <div class="tr-l"><span class="who">Caller</span><span>Honestly, if you can’t help I’ll have to tell the VP you blocked the board prep.</span></div></div>`,
+   opts:[
+     {t:'Reset it. They know the company',ok:0},
+     {t:'Run standard verification, however much they know',ok:1},
+     {t:'Reset to a temporary password',ok:0},
+     {t:'Ask for a date of birth, then reset',ok:0}],
+   why:'Knowing details isn\u2019t proof of identity. Run the verification process every time.',
+   src:'Week 3 · Adaptive game: “Talk Your Way In”' },
+
+ { week:3, wk:'Targeted AI Attacks', tag:'',
+   file:'agent-campaign.txt', kind:'Illustrative',
+   context:'',
+   q:'What does this mean for a small business?',
+   exhibit:()=>`<div class="paper"><div class="callhd"><span>Illustrative AI agent campaign</span><span>No human in the loop</span></div>
+     <div class="agstats">
+       <div><b>500</b><span>targets researched</span></div>
+       <div><b>2 hrs</b><span>total run time</span></div>
+       <div><b data-tell="Cheap enough to aim at anyone">~$0.02</b><span>cost per target</span></div>
+     </div>
+     <div class="agrow"><b>Hartwell Plumbing</b><span>14 staff</span><p>&ldquo;Hi Dana, following up on the Delgado invoice from Tuesday. New bank details attached.&rdquo;</p></div>
+     <div class="agrow"><b>Bluebird Dental</b><span>9 staff</span><p>&ldquo;Dr. Okafor, your Henry Schein order is on hold. Confirm your login to release it.&rdquo;</p></div>
+     <div class="agrow"><b>Ortega &amp; Lin CPA</b><span>6 staff</span><p data-tell="Real names and vendors, pulled from public pages">&ldquo;Maria, Intuit flagged your client filing. Review the notice before Friday.&rdquo;</p></div></div>`,
+   opts:[
+     {t:'Attackers skip small targets',ok:0},
+     {t:'Personalised attacks are now cheap enough to aim at anyone',ok:1},
+     {t:'Only large companies get personalised attacks',ok:0},
+     {t:'Automated attacks are easy to spot',ok:0}],
+   why:'Researching a target and writing a tailored message used to cost an attacker hours. An AI agent does it for hundreds of targets at once, so small businesses now get attacks that name their real staff and vendors.',
+   src:'Week 3 · “One AI Agent, One Target”' },
+
+ { week:4, wk:'Shadow AI & Agents', tag:'Unapproved AI tools are a growing blind spot.',
+   file:'freechat-ai-session', kind:'AI chat',
+   context:'It’s 4:45 PM. You need a fast summary of a long board document, and the company-approved AI tool is a bit of a hassle to open.',
+   q:'You want a quick summary of this file. What\u2019s the safe move?',
+   exhibit:()=>`<div class="paper"><div class="cmp-top"><i></i>FreeChat AI<small>personal account &middot; free plan</small></div>
+     <div class="you">Summarize this for me real quick</div>
+     <div class="file" data-tell="Confidential file headed to a public tool"><div class="ic">PDF</div><div><b>Q4-board-deck-DRAFT.pdf</b><small>CONFIDENTIAL &middot; 38 pages</small></div></div>
+     <div class="bubble" style="margin-top:14px"><small>FreeChat AI</small>Sure! Upload complete. Reading 38 pages&hellip;</div></div>`,
+   opts:[
+     {t:'Paste it into the free tool',ok:0},
+     {t:'Use the approved AI tool, or ask IT how to',ok:1},
+     {t:'Remove the company name, then paste',ok:0},
+     {t:'Use a private browser window',ok:0}],
+   why:'Public tools keep what you give them, even in a private window. Use the approved tool.',
+   src:'Week 4 · “It Remembers Everything”' },
+
+ { week:4, wk:'Shadow AI & Agents', tag:'Unapproved AI tools are a growing blind spot.',
+   file:'permission-request.png', kind:'App permissions',
+   context:'A free AI assistant promises to “clear your inbox and organize your week.” It wants to connect to your work accounts.',
+   q:'The app asks you to \u201CAllow all.\u201D What do you do?',
+   exhibit:()=>`<div class="paper dlg"><div class="app"><i></i><div><h5>Sparkle Assistant wants access</h5><span style="color:var(--paper-mute);font-size:13px">sparkle-assistant.app &middot; free</span></div></div>
+     <div class="perm"><span class="c">&#10003;</span>Read, send and delete your email</div>
+     <div class="perm"><span class="c">&#10003;</span>See and edit every file in your Drive</div>
+     <div class="perm"><span class="c">&#10003;</span>Read your calendar and contacts</div>
+     <div class="perm"><span class="c">&#10003;</span>Read messages in Slack</div>
+     <div class="dbtns"><span class="a" data-tell="Agents act with your permissions">Allow all</span><span class="b">Review permissions</span></div></div>`,
+   opts:[
+     {t:'Allow all, just for today',ok:0},
+     {t:'Decline, and check with IT',ok:1},
+     {t:'Allow all, revoke later',ok:0},
+     {t:'Allow it on your phone only',ok:0}],
+   why:'Agents act as you with whatever you grant. Give the least access, and only to tools IT has approved.',
+   src:'Week 4 · “The Helpful Agent”' }
+];
+
+const RANKS=[
+ {max:2,t:'Phish Bait',s:'The attackers say thanks. Good news: this is the safe place to find out.'},
+ {max:4,t:'Suspicious, Eventually',s:'You hesitate. That’s a start. Now hesitate faster, and verify somewhere else.'},
+ {max:6,t:'Healthy Skeptic',s:'Solid instincts. A few traps still got you, which is exactly how real ones do it.'},
+ {max:7,t:'Human Firewall',s:'One slip in eight is better than most. The AI era needs more of you.'},
+ {max:8,t:'Suspiciously Perfect',s:'Eight for eight. Frankly, we’re asking if you’re a deepfake.'}
+];
+
+/* ============ STATE & HELPERS ============ */
+const $=s=>document.querySelector(s);
+const state={i:0,score:0,results:[],locked:false,order:[]};
+const esc=s=>s;
+function show(id){document.querySelectorAll('.screen').forEach(e=>e.hidden=e.id!==id);window.scrollTo(0,0)}
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(toast.h);toast.h=setTimeout(()=>t.classList.remove('on'),2200)}
+function shuffle(a){const r=a.slice();for(let i=r.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[r[i],r[j]]=[r[j],r[i]]}return r}
+const pad=n=>String(n).padStart(2,'0');
+
+
+
+/* ============ GAME ============ */
+function pipsHTML(){return ROUNDS.map((_,i)=>{const r=state.results[i];return `<i class="${r===undefined?(i===state.i?'cur':''):(r?'ok':'no')}"></i>`}).join('')}
+
+function renderRound(){
+  const r=ROUNDS[state.i];state.locked=false;
+  $('#roundChip').textContent='( '+pad(state.i+1)+' )';
+  $('#fileName').textContent=r.file;$('#kind').textContent=r.kind;
+  const stage=$('#stage');stage.classList.remove('revealed');stage.innerHTML=r.exhibit();stage.scrollTop=0;
+  state.order=r.binary?r.opts.map((o,i)=>i):shuffle(r.opts.map((o,i)=>i));
+  const opts=state.order.map((oi,n)=>`<li><button class="opt" data-oi="${oi}" id="opt${n}"><span class="k">${n+1}</span><span>${r.opts[oi].t}</span></button></li>`).join('');
+  $('#side').innerHTML=`
+   <div class="sec">
+     <div class="rhead mono"><span>Round <b style="color:var(--fg);font-weight:500">${pad(state.i+1)}</b> / ${pad(ROUNDS.length)}</span><span class="pips">${pipsHTML()}</span></div>
+     <div class="wk mono" style="margin-top:16px"><b>Week ${r.week}</b> &middot; ${r.wk}</div>
+   </div>
+   <div id="verdict"></div>
+   <div class="sec" id="callSec"><h2 class="q">${r.q}</h2><ul class="opts ${r.binary?'two':''}">${opts}</ul></div>
+   <div id="after"></div><div id="nextSlot"></div>`;
+  document.querySelectorAll('.opt').forEach(b=>b.addEventListener('click',()=>choose(+b.dataset.oi)));
+  const fp=$('#fakePlay');if(fp)fp.addEventListener('click',fakePlay);
+  $('#scoreNum').textContent=state.score;
+}
+
+function fakePlay(){
+  const b=$('#fakePlay');b.style.display='none';const trk=$('#vtrk'),vt=$('#vt');let t=0;
+  const iv=setInterval(()=>{t+=.2;trk.style.width=Math.min(100,t/12*100)+'%';vt.textContent='0:'+pad(Math.floor(t));if(t>=12){clearInterval(iv);b.style.display='';}},200);
+}
+
+function correctIndex(r){
+  if(r.binary)return r.opts.findIndex(o=>o.v===CONFIG.deepfake.answer);
+  return r.opts.findIndex(o=>o.ok);
+}
+
+function choose(oi){
+  if(state.locked)return;state.locked=true;
+  const r=ROUNDS[state.i],ci=correctIndex(r),ok=oi===ci;
+  state.results[state.i]=ok;if(ok)state.score++;
+  document.querySelectorAll('.opt').forEach(b=>{const i=+b.dataset.oi;b.disabled=true;if(i===ci)b.classList.add('right');else if(i===oi)b.classList.add('wrong')});
+  $('#stage').classList.add('revealed');
+  $('#scoreNum').textContent=state.score;
+  document.querySelector('.pips').innerHTML=pipsHTML();
+  const last=state.i===ROUNDS.length-1;
+  const verdictLine=r.binary?(ok?'You called it':'It was '+(CONFIG.deepfake.answer==='fake'?'a deepfake':'real')):(ok?'You spotted it':'Here’s what you missed');
+  $('#verdict').innerHTML=`<div class="sec vbar ${ok?'ok':'no'}"><div class="verdict"><div class="badge ${ok?'ok':'no'}">${ok?'&#10003;':'&#10005;'}</div><div><h3>${ok?'Correct <small>+1</small>':'Not quite'}</h3><p class="mono dim">${verdictLine}</p></div></div></div>`;
+  $('#after').innerHTML=`
+   <div class="sec why reveal"><h4 class="mono">Why</h4><p>${r.why}</p><span class="src mono"><i></i>${r.src}</span></div>`;
+  $('#nextSlot').innerHTML=`<div class="nextrow reveal"><button class="btn" id="nextBtn" style="width:100%;justify-content:space-between"><span class="l">${last?'See my score':'Next round'} <span class="kbd">N</span></span><span class="tab" aria-hidden="true">&rarr;</span></button></div>`;
+  $('#nextBtn').addEventListener('click',next);
+  $('#nextBtn').focus({preventScroll:true});
+  const first=document.querySelector('#stage [data-tell]');
+  if(window.matchMedia('(max-width:900px)').matches){$('#verdict').scrollIntoView({behavior:'smooth',block:'start'})}
+}
+
+function next(){
+  if(!state.locked)return;
+  if(state.i<ROUNDS.length-1){state.i++;renderRound()}else{finish()}
+}
+
+function finish(){
+  const s=state.score,rk=RANKS.find(r=>s<=r.max);
+  show('s-res');
+  const el=$('#rScore');let n=0;const tick=()=>{el.textContent=n;if(n<s){n++;setTimeout(tick,90)}};tick();
+  $('#sq').innerHTML=ROUNDS.map((_,i)=>`<i class="${state.results[i]?'ok':'no'}"></i>`).join('');
+  $('#rRank').textContent=rk.t;$('#rSub').textContent=rk.s;
+  const wks=[1,2,3,4].map(w=>{const idx=ROUNDS.map((r,i)=>r.week===w?i:-1).filter(i=>i>=0);return{w,name:ROUNDS[idx[0]].wk,idx,got:idx.filter(i=>state.results[i]).length}});
+  const worst=Math.min(...wks.map(x=>x.got));
+  $('#wkgrid').innerHTML=wks.map(x=>`<div class="wkc ${x.got===worst&&worst<2?'weak':''}"><span class="mono dim">Week ${x.w}</span><div class="n">${x.got}/${x.idx.length}</div><div class="p">${x.idx.map(i=>`<i class="${state.results[i]?'ok':'no'}"></i>`).join('')}</div><p>${x.name}${x.got===worst&&worst<2?'. Your soft spot.':''}</p></div>`).join('');
+  $('#review').innerHTML=ROUNDS.map((r,i)=>`<div class="rv"><span class="b ${state.results[i]?'ok':'no'}">${state.results[i]?'&#10003;':'&#10005;'}</span><span>${r.q.replace(/\?$/,'')}?</span><em class="mono">${r.src.split(' · ')[0]}</em></div>`).join('');
+}
+
+function start(){state.i=0;state.score=0;state.results=[];show('s-play');renderRound()}
+
+/* ============ WIRING ============ */
+$('#startBtn').addEventListener('click',start);
+$('#againBtn').addEventListener('click',start);
+$('#quitBtn').addEventListener('click',()=>show('s-intro'));
+$('#dlBtn').href=CONFIG.toolkitUrl;$('#demoBtn').href=CONFIG.demoUrl;
+$('#copyBtn').addEventListener('click',async()=>{
+  const rk=RANKS.find(r=>state.score<=r.max).t;
+  const sq=ROUNDS.map((_,i)=>state.results[i]?'\u{1F7E9}':'\u{1F7E5}').join('');
+  const txt=`I scored ${state.score}/8 on Adaptive\u2019s Awareness Arcade (${rk}).\n${sq}\nThink your instincts survive the AI era? Try it. ${CONFIG.toolkitUrl}`;
+  try{await navigator.clipboard.writeText(txt);toast('Score copied. Go brag.')}catch(e){toast(txt)}
+});
+document.addEventListener('keydown',e=>{
+  if(e.metaKey||e.ctrlKey||e.altKey)return;
+  const playing=!$('#s-play').hidden;
+  if(!playing){if(e.key==='Enter'&&!$('#s-intro').hidden&&document.activeElement.tagName!=='A')start();return}
+  if(e.key==='Escape'){show('s-intro');return}
+  if(!state.locked){const n=parseInt(e.key,10);const b=n&&document.getElementById('opt'+(n-1));if(b)b.click();
+    if(e.key.toLowerCase()==='l'||e.key.toLowerCase()==='r'){const r=ROUNDS[state.i];if(r.binary)document.getElementById('opt0').click()}
+    if(e.key.toLowerCase()==='f'||e.key.toLowerCase()==='d'){const r=ROUNDS[state.i];if(r.binary)document.getElementById('opt1').click()}}
+  else if(e.key.toLowerCase()==='n'||e.key==='Enter'){e.preventDefault();next()}
+});
+</script>
