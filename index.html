@@ -54,7 +54,8 @@ button{font:inherit;color:inherit;cursor:pointer}
 .intro>*{position:relative;z-index:1}
 @keyframes drift{to{transform:translateX(-46%) translateY(14px)}}
 .pips-hero{display:flex;gap:10px;margin-bottom:26px}
-.pips-hero i{width:12px;height:12px;background:var(--fg);border-radius:2px;opacity:.9;animation:blink 3.2s infinite}
+.pips-hero i{width:12px;height:12px;background:var(--fg);border-radius:2px;opacity:.9;animation:blink 4s infinite}
+.pips-hero i:nth-child(9){animation-delay:3.2s}.pips-hero i:nth-child(10){animation-delay:3.6s}
 .pips-hero i:nth-child(1){animation-delay:0s}.pips-hero i:nth-child(2){animation-delay:.4s}.pips-hero i:nth-child(3){animation-delay:.8s}.pips-hero i:nth-child(4){animation-delay:1.2s}
 .pips-hero i:nth-child(5){animation-delay:1.6s}.pips-hero i:nth-child(6){animation-delay:2s}.pips-hero i:nth-child(7){animation-delay:2.4s}.pips-hero i:nth-child(8){animation-delay:2.8s}
 @keyframes blink{0%,12%{background:var(--yellow);opacity:1;transform:scale(1.25)}20%,100%{background:var(--fg);opacity:.9;transform:none}}
@@ -81,7 +82,7 @@ h1.title em{font-style:normal;color:var(--muted);opacity:.75}
 .covered-h{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:20px}
 .covered-h h2{margin:0;font-size:clamp(26px,3.6vw,38px);font-weight:600;letter-spacing:-.03em}
 .covered-h .mono{color:var(--muted)}
-.cv-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.cv-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
 .cv{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 18px 16px;display:flex;flex-direction:column;gap:10px;transition:transform .2s,border-color .2s}
 .cv:hover{transform:translateY(-3px);border-color:var(--fg)}
 .cv .wkn{display:flex;align-items:center;justify-content:space-between;color:var(--muted)}
@@ -93,8 +94,6 @@ h1.title em{font-style:normal;color:var(--muted);opacity:.75}
 .cv li::before{content:"";width:6px;height:6px;margin-top:8px;background:var(--fg);border-radius:1px}
 .cv .qs{margin-top:auto;padding-top:14px;border-top:1px dashed var(--line);display:flex;align-items:center;justify-content:space-between;color:var(--muted)}
 .cv .qs span.p{display:flex;gap:5px}.cv .qs span.p i{width:12px;height:12px;border-radius:2px;border:1.5px solid var(--fg)}
-@media (max-width:1000px){.cv-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media (max-width:560px){.cv-grid{grid-template-columns:1fr}}
 
 /* ---------- play ---------- */
 .play{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;padding-block:18px 28px}
@@ -124,7 +123,7 @@ h1.title em{font-style:normal;color:var(--muted);opacity:.75}
 .pips i{width:12px;height:12px;border-radius:2px;border:1.5px solid var(--line);transition:background .25s,border-color .25s}
 .pips i:nth-child(2n){margin-right:6px}
 .pips.sq i{width:18px;height:18px;margin:0!important}
-.pips i:nth-child(8){margin-right:0}
+.pips i:last-child{margin-right:0}
 .pips i.cur{border-color:var(--fg);animation:pulse 1.4s infinite}
 .pips i.ok{background:var(--good);border-color:var(--good)}
 .pips i.no{background:var(--bad);border-color:var(--bad)}
@@ -219,6 +218,7 @@ h2.q{font-size:clamp(21px,2.4vw,27px);line-height:1.2;letter-spacing:-.02em;font
 .tr-l{display:grid;grid-template-columns:78px 1fr;gap:12px;padding:9px 0;border-bottom:1px solid var(--paper-line)}
 .tr-l:last-child{border:0}
 .revealed .tr-l .tellrow{margin-bottom:44px;align-self:start}
+.revealed .tellblk{margin-bottom:56px}
 .tr-l .who{font:500 11px var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--paper-mute);padding-top:3px}
 .callhd{display:flex;justify-content:space-between;color:var(--paper-mute);font:11px var(--mono);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
 .log-row{display:grid;grid-template-columns:54px 1fr;gap:12px;padding:9px 0;border-bottom:1px solid var(--paper-line)}
@@ -246,7 +246,7 @@ h2.q{font-size:clamp(21px,2.4vw,27px);line-height:1.2;letter-spacing:-.02em;font
 .big small{font-size:.28em;color:var(--muted);letter-spacing:-.02em;margin-left:.1em}
 .rank{display:inline-block;background:var(--yellow);color:#0B0B0C;font-weight:600;font-size:clamp(18px,3vw,26px);padding:6px 16px;border-radius:8px;margin:18px 0 10px;transform:rotate(-1.5deg)}
 .rank-sub{color:var(--muted);font-size:18px;max-width:46ch;margin:0 auto 24px}
-.wkgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:8px 0 12px}
+.wkgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin:8px 0 12px}
 .wkc{border:1px solid var(--line);border-radius:12px;padding:16px;background:var(--card)}
 .wkc .n{font-size:30px;font-weight:500;letter-spacing:-.03em;margin:6px 0 8px;font-variant-numeric:tabular-nums}
 .wkc .p{display:flex;gap:5px}.wkc .p i{height:6px;flex:1;border-radius:3px;background:var(--line)}.wkc .p i.ok{background:var(--good)}.wkc .p i.no{background:var(--bad)}
@@ -321,18 +321,18 @@ h2.q{font-size:clamp(21px,2.4vw,27px);line-height:1.2;letter-spacing:-.02em;font
 <main>
 <!-- ============ INTRO ============ -->
 <section class="screen intro" id="s-intro">
-  <div class="pips-hero" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+  <div class="pips-hero" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
   <div class="eyebrow mono"><b>Adaptive Security</b> / Cybersecurity Awareness Month Challenge</div>
   <h1 class="title">Awareness <em>Arcade</em></h1>
-  <p class="lede">A quick quiz on what you would have learned from Adaptive&rsquo;s Cybersecurity Awareness Month training content. <b>Two questions for each week:</b> AI phishing, deepfakes, targeted attacks and shadow AI.</p>
+  <p class="lede">A quick quiz on what you would have learned from Adaptive&rsquo;s Cybersecurity Awareness Month training content. <b>Two questions for each week:</b> AI phishing, deepfakes, targeted attacks and shadow AI. Then two more on the whole month.</p>
   <div class="ctas">
     <button class="btn" id="startBtn"><span class="l">Play now</span><span class="tab" aria-hidden="true">&rarr;</span></button>
     <a class="btn ghost" href="https://www.adaptivesecurity.com/cybersecurity-awareness-month" target="_blank" rel="noopener"><span class="l">Get the free toolkit</span></a>
   </div>
 
   <div class="covered">
-    <div class="covered-h"><h2>What&rsquo;s covered</h2><span class="mono">Two questions from each week</span></div>
-    <div class="cv-grid"><article class="cv"><div class="wkn mono"><span>Week 1</span><i></i></div><h3>AI Basics</h3><ul><li>Why typos are no longer a phishing tell</li><li>How credential stuffing works when passwords get reused</li><li>Why unique passwords and MFA still stop the basics</li></ul><div class="qs mono"><span>2 questions</span><span class="p" aria-hidden="true"><i></i><i></i></span></div></article><article class="cv"><div class="wkn mono"><span>Week 2</span><i></i></div><h3>Deepfakes &amp; Impersonation</h3><ul><li>How faces and voices get cloned</li><li>Real cases: a deepfake CFO call and a fake job applicant</li><li>Verifying through a known number or second channel</li></ul><div class="qs mono"><span>2 questions</span><span class="p" aria-hidden="true"><i></i><i></i></span></div></article><article class="cv"><div class="wkn mono"><span>Week 3</span><i></i></div><h3>Targeted AI Attacks</h3><ul><li>How public details become attack material</li><li>Why a caller who knows a lot still needs verifying</li><li>What AI agents can now automate on their own</li></ul><div class="qs mono"><span>2 questions</span><span class="p" aria-hidden="true"><i></i><i></i></span></div></article><article class="cv"><div class="wkn mono"><span>Week 4</span><i></i></div><h3>Shadow AI &amp; Agents</h3><ul><li>What not to put into public AI tools</li><li>Why &ldquo;Allow all&rdquo; is risky for AI agents</li><li>Drafting isn&rsquo;t sending: limiting what agents can do</li></ul><div class="qs mono"><span>2 questions</span><span class="p" aria-hidden="true"><i></i><i></i></span></div></article></div>
+    <div class="covered-h"><h2>What&rsquo;s covered</h2><span class="mono">Two questions from each section</span></div>
+    <div class="cv-grid"><article class="cv"><div class="wkn mono"><span>Week 1</span><i></i></div><h3>AI Basics</h3><ul><li>Why typos are no longer a phishing tell</li><li>How credential stuffing works when passwords get reused</li><li>Why unique passwords and MFA still stop the basics</li></ul><div class="qs mono"><span>2 questions</span><span class="p" aria-hidden="true"><i></i><i></i></span></div></article><article class="cv"><div class="wkn mono"><span>Week 2</span><i></i></div><h3>Deepfakes &amp; Impersonation</h3><ul><li>How faces and voices get cloned</li><li>Real cases: a deepfake CFO call and a fake job applicant</li><li>Verifying through a known number or second channel</li></ul><div class="qs mono"><span>2 questions</span><span class="p" aria-hidden="true"><i></i><i></i></span></div></article><article class="cv"><div class="wkn mono"><span>Week 3</span><i></i></div><h3>Targeted AI Attacks</h3><ul><li>How public details become attack material</li><li>Why a caller who knows a lot still needs verifying</li><li>What AI agents can now automate on their own</li></ul><div class="qs mono"><span>2 questions</span><span class="p" aria-hidden="true"><i></i><i></i></span></div></article><article class="cv"><div class="wkn mono"><span>Week 4</span><i></i></div><h3>Shadow AI &amp; Agents</h3><ul><li>What not to put into public AI tools</li><li>Why &ldquo;Allow all&rdquo; is risky for AI agents</li><li>Drafting isn&rsquo;t sending: limiting what agents can do</li></ul><div class="qs mono"><span>2 questions</span><span class="p" aria-hidden="true"><i></i><i></i></span></div></article><article class="cv"><div class="wkn mono"><span>Month recap</span><i></i></div><h3>The Whole Month</h3><ul><li>Verifying urgent requests on a second channel</li><li>Reporting suspicious messages, even near misses</li><li>Pausing before you act, however real it looks</li></ul><div class="qs mono"><span>2 questions</span><span class="p" aria-hidden="true"><i></i><i></i></span></div></article></div>
   </div>
 </section>
 
@@ -356,7 +356,7 @@ h2.q{font-size:clamp(21px,2.4vw,27px);line-height:1.2;letter-spacing:-.02em;font
 <section class="screen res wrap" id="s-res" hidden>
   <div class="res-hero">
     <div class="mono dim">Final score</div>
-    <div class="big"><span id="rScore">0</span><small>/8</small></div>
+    <div class="big"><span id="rScore">0</span><small id="rTotal">/10</small></div>
     <div class="rank" id="rRank"></div>
     <p class="rank-sub" id="rSub"></p>
     <div class="pips sq" id="sq" style="justify-content:center;margin:0 auto 22px"></div>
@@ -570,16 +570,46 @@ const ROUNDS = [
      {t:'Allow all, revoke later',ok:0},
      {t:'Allow it on your phone only',ok:0}],
    why:'Agents act as you with whatever you grant. Give the least access, and only to tools IT has approved.',
-   src:'Week 4 · “The Helpful Agent”' }
+   src:'Week 4 · “The Helpful Agent”' },
+ { week:5, wk:'The Whole Month', tag:'',
+   file:'direct-message.txt', kind:'Direct message',
+   context:'',
+   q:'The CEO wants gift cards bought in 20 minutes. What\u2019s the best first move?',
+   exhibit:()=>`<div class="paper"><div class="callhd"><span>Direct message</span><span>4:52 PM</span></div>
+     <div class="em-head" style="border:0;margin:0 0 4px;padding:0"><div class="em-av" style="background:#E8D2FF;color:#5B2CA0">PR</div><div><b>Priya Raman</b> <small>CEO</small></div></div>
+     <div class="bubble tellblk" data-tell="Urgent, secret and skips the normal process">I\u2019m about to board. I need $2,000 in gift cards for clients in the next 20 minutes. Don\u2019t call, I can\u2019t pick up. Just buy them and send me the codes here.</div></div>`,
+   opts:[
+     {t:'Buy them fast, then confirm later',ok:0},
+     {t:'Verify on a separate, trusted channel before acting',ok:1},
+     {t:'Reply in the same chat and ask if it\u2019s really them',ok:0},
+     {t:'Ask a coworker if they got the same message',ok:0}],
+   why:'Urgency, secrecy and \u201Cdon\u2019t call\u201D are the pattern. Asking in the same chat only asks the attacker. Check through a number or channel you already trust.',
+   src:'Month recap \u00B7 Verify before you act' },
+
+ { week:5, wk:'The Whole Month', tag:'',
+   file:'text-message.txt', kind:'Text message',
+   context:'',
+   q:'You tapped the link, then closed the page without entering anything. What do you do?',
+   exhibit:()=>`<div class="paper"><div class="callhd"><span>Text message</span><span>Today 9:14 AM</span></div>
+     <div class="bubble tellblk" data-tell="Fake delivery text with a look-alike link"><small>+1 (415) 555-0127</small>USPS: Your package is on hold. Pay a $1.99 redelivery fee to release it: usps-redelivery-help.com/pay</div>
+     <div class="bubble" style="margin-left:auto;width:fit-content;max-width:90%;background:#EDEBFF"><small>You, 9:16 AM</small>Tapped the link. The page asked for a card number, so I closed it.</div></div>`,
+   opts:[
+     {t:'Nothing. No harm done',ok:0},
+     {t:'Report it to IT or security right away',ok:1},
+     {t:'Delete the text and move on',ok:0},
+     {t:'Wait and see if anything happens',ok:0}],
+   why:'Opening a risky link is worth reporting even when nothing was entered. Fast reports let security protect everyone who got the same text.',
+   src:'Month recap \u00B7 Report suspicious messages' }
 ];
 
 const RANKS=[
- {max:2,t:'Phish Bait',s:'The attackers say thanks. Good news: this is the safe place to find out.'},
- {max:4,t:'Suspicious, Eventually',s:'You hesitate. That’s a start. Now hesitate faster, and verify somewhere else.'},
- {max:6,t:'Healthy Skeptic',s:'Solid instincts. A few traps still got you, which is exactly how real ones do it.'},
- {max:7,t:'Human Firewall',s:'One slip in eight is better than most. The AI era needs more of you.'},
- {max:8,t:'Suspiciously Perfect',s:'Eight for eight. Frankly, we’re asking if you’re a deepfake.'}
+ {max:.25,t:'Phish Bait',s:'The attackers say thanks. Good news: this is the safe place to find out.'},
+ {max:.5,t:'Suspicious, Eventually',s:'You hesitate. That\u2019s a start. Now hesitate faster, and verify somewhere else.'},
+ {max:.8,t:'Healthy Skeptic',s:'Solid instincts. A few traps still got you, which is exactly how real ones do it.'},
+ {max:.95,t:'Human Firewall',s:'One slip is better than most. The AI era needs more of you.'},
+ {max:1,t:'Suspiciously Perfect',s:'A perfect run. Frankly, we\u2019re asking if you\u2019re a deepfake.'}
 ];
+const rankFor=sc=>RANKS.find(r=>sc/ROUNDS.length<=r.max);
 
 /* ============ STATE & HELPERS ============ */
 const $=s=>document.querySelector(s);
@@ -605,7 +635,7 @@ function renderRound(){
   $('#side').innerHTML=`
    <div class="sec">
      <div class="rhead mono"><span>Round <b style="color:var(--fg);font-weight:500">${pad(state.i+1)}</b> / ${pad(ROUNDS.length)}</span><span class="pips">${pipsHTML()}</span></div>
-     <div class="wk mono" style="margin-top:16px"><b>Week ${r.week}</b> &middot; ${r.wk}</div>
+     <div class="wk mono" style="margin-top:16px"><b>${r.week===5?'Month recap':'Week '+r.week}</b> &middot; ${r.wk}</div>
    </div>
    <div id="verdict"></div>
    <div class="sec" id="callSec"><h2 class="q">${r.q}</h2><ul class="opts ${r.binary?'two':''}">${opts}</ul></div>
@@ -651,15 +681,16 @@ function next(){
 }
 
 function finish(){
-  const s=state.score,rk=RANKS.find(r=>s<=r.max);
+  const s=state.score,rk=rankFor(s);
   show('s-res');
+  $('#rTotal').textContent='/'+ROUNDS.length;
   const el=$('#rScore');let n=0;const tick=()=>{el.textContent=n;if(n<s){n++;setTimeout(tick,90)}};tick();
   $('#sq').innerHTML=ROUNDS.map((_,i)=>`<i class="${state.results[i]?'ok':'no'}"></i>`).join('');
   $('#rRank').textContent=rk.t;$('#rSub').textContent=rk.s;
-  const wks=[1,2,3,4].map(w=>{const idx=ROUNDS.map((r,i)=>r.week===w?i:-1).filter(i=>i>=0);return{w,name:ROUNDS[idx[0]].wk,idx,got:idx.filter(i=>state.results[i]).length}});
+  const wks=[1,2,3,4,5].map(w=>{const idx=ROUNDS.map((r,i)=>r.week===w?i:-1).filter(i=>i>=0);return{w,name:ROUNDS[idx[0]].wk,idx,got:idx.filter(i=>state.results[i]).length}});
   const worst=Math.min(...wks.map(x=>x.got));
-  $('#wkgrid').innerHTML=wks.map(x=>`<div class="wkc ${x.got===worst&&worst<2?'weak':''}"><span class="mono dim">Week ${x.w}</span><div class="n">${x.got}/${x.idx.length}</div><div class="p">${x.idx.map(i=>`<i class="${state.results[i]?'ok':'no'}"></i>`).join('')}</div><p>${x.name}${x.got===worst&&worst<2?'. Your soft spot.':''}</p></div>`).join('');
-  $('#review').innerHTML=ROUNDS.map((r,i)=>`<div class="rv"><span class="b ${state.results[i]?'ok':'no'}">${state.results[i]?'&#10003;':'&#10005;'}</span><span>${r.q.replace(/\?$/,'')}?</span><em class="mono">${r.src.split(' · ')[0]}</em></div>`).join('');
+  $('#wkgrid').innerHTML=wks.map(x=>`<div class="wkc ${x.got===worst&&worst<2?'weak':''}"><span class="mono dim">${x.w===5?'Month recap':'Week '+x.w}</span><div class="n">${x.got}/${x.idx.length}</div><div class="p">${x.idx.map(i=>`<i class="${state.results[i]?'ok':'no'}"></i>`).join('')}</div><p>${x.name}${x.got===worst&&worst<2?'. Your soft spot.':''}</p></div>`).join('');
+  $('#review').innerHTML=ROUNDS.map((r,i)=>`<div class="rv"><span class="b ${state.results[i]?'ok':'no'}">${state.results[i]?'&#10003;':'&#10005;'}</span><span>${r.q.replace(/\?$/,'')}?</span><em class="mono">${r.src.split(' · ')[0].replace('Month recap','Recap')}</em></div>`).join('');
 }
 
 function start(){state.i=0;state.score=0;state.results=[];show('s-play');renderRound()}
@@ -670,9 +701,9 @@ $('#againBtn').addEventListener('click',start);
 $('#quitBtn').addEventListener('click',()=>show('s-intro'));
 $('#dlBtn').href=CONFIG.toolkitUrl;$('#demoBtn').href=CONFIG.demoUrl;
 $('#copyBtn').addEventListener('click',async()=>{
-  const rk=RANKS.find(r=>state.score<=r.max).t;
+  const rk=rankFor(state.score).t;
   const sq=ROUNDS.map((_,i)=>state.results[i]?'\u{1F7E9}':'\u{1F7E5}').join('');
-  const txt=`I scored ${state.score}/8 on Adaptive\u2019s Awareness Arcade (${rk}).\n${sq}\nThink your instincts survive the AI era? Try it. ${CONFIG.shareUrl}`;
+  const txt=`I scored ${state.score}/${ROUNDS.length} on Adaptive\u2019s Awareness Arcade (${rk}).\n${sq}\nThink your instincts survive the AI era? Try it. ${CONFIG.shareUrl}`;
   try{await navigator.clipboard.writeText(txt);toast('Score copied. Go brag.')}catch(e){toast(txt)}
 });
 document.addEventListener('keydown',e=>{
