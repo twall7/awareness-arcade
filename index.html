@@ -19,9 +19,10 @@
    with the CAM treatment: 3D week icons, dashed week dividers, sun glow. Quiz card pops in like the homepage product cards. */
 @font-face{font-family:'Season Sans';src:url(fonts/SeasonSans.woff2) format('woff2');font-weight:300 900;font-display:swap}
 :root{
-  --bg:#FCFBF6; --fg:#090D12; --fg2:#3B3C42; --muted:#74767D; --line:rgba(9,13,18,.14); --card:#FFFFFF;
+  --bg:#F6F7F9; --fg:#090D12; --fg2:#3B3C42; --muted:#74767D; --line:rgba(9,13,18,.14); --card:#FFFFFF;
   --yellow:#FFD54A; --yellow-soft:#FFF697; --sunrise:#EDC12D; --good:#009767; --bad:#C80D0D; --ring:#FF4A4A;
-  --btn:#090D12; --btn-fg:#FFFFFF; --glow:rgba(255,213,74,.55);
+  --btn:#090D12; --btn-fg:#FFFFFF; --glow:rgba(255,213,74,0);
+  --mosaic-line:rgba(9,13,18,.08); --mosaic-base:#EDEFF2; --sub:rgba(9,13,18,.62);
   --paper:#FFFFFF; --paper-ink:#141414; --paper-mute:#6b6b66; --paper-line:#DAD9D2; --paper-fill:#F2F1EC;
   --term-bg:#101215; --term-fg:#C9D1D9; --term-mute:#6E7781;
   --font:'Inter',ui-sans-serif,system-ui,-apple-system,'Segoe UI',sans-serif;
@@ -31,10 +32,10 @@
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
   --bg:#090D12; --fg:#F6F7F9; --fg2:#D8DADF; --muted:#9D9FA6; --line:rgba(255,255,255,.16); --card:#0F161E;
-  --good:#2DD4A0; --bad:#FF6B6B; --ring:#FF6B6B; --btn:#F6F7F9; --btn-fg:#090D12; --glow:rgba(255,213,74,.16); color-scheme:dark}}
+  --good:#2DD4A0; --bad:#FF6B6B; --ring:#FF6B6B; --btn:#F6F7F9; --btn-fg:#090D12; --glow:rgba(255,213,74,0); --mosaic-line:rgba(255,255,255,.07); --mosaic-base:rgba(255,255,255,.035); --sub:rgba(255,255,255,.65); color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#090D12; --fg:#F6F7F9; --fg2:#D8DADF; --muted:#9D9FA6; --line:rgba(255,255,255,.16); --card:#0F161E;
-  --good:#2DD4A0; --bad:#FF6B6B; --ring:#FF6B6B; --btn:#F6F7F9; --btn-fg:#090D12; --glow:rgba(255,213,74,.16); color-scheme:dark}
+  --good:#2DD4A0; --bad:#FF6B6B; --ring:#FF6B6B; --btn:#F6F7F9; --btn-fg:#090D12; --glow:rgba(255,213,74,0); --mosaic-line:rgba(255,255,255,.07); --mosaic-base:rgba(255,255,255,.035); --sub:rgba(255,255,255,.65); color-scheme:dark}
 
 *{box-sizing:border-box}
 :root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -81,10 +82,10 @@ h1,h2,h3,h4,.big,.rank,.btn,.brand,.verdict h3,.inside b,.wkc .n,.opts.two .opt{
 @keyframes blink{0%,12%{background:var(--yellow);opacity:1;transform:scale(1.25)}20%,100%{background:var(--fg);opacity:.9;transform:none}}
 .eyebrow{color:var(--muted);margin-bottom:22px}
 .eyebrow b{color:var(--fg);font-weight:500}
-h1.title{font-weight:600;font-size:clamp(48px,10vw,120px);line-height:.95;letter-spacing:-.04em;margin:0 0 28px;text-wrap:balance}
+h1.title{font-weight:420;font-size:clamp(44px,7.4vw,84px);line-height:1.02;letter-spacing:-.02em;margin:0 0 28px;text-wrap:balance}
 h1.title em{font-style:normal;color:var(--muted);opacity:.8}
-.lede{max-width:640px;font-size:clamp(17px,2.2vw,20px);color:var(--fg2);margin:0 0 34px;text-wrap:pretty}
-.lede b{color:var(--fg);font-weight:600}
+.lede{max-width:600px;font-size:clamp(16px,1.8vw,18px);color:var(--sub);margin:0 0 34px;text-wrap:pretty}
+.lede b{color:var(--fg);font-weight:500}
 .ctas{display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
 .meta{margin-top:26px;color:var(--muted);display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
 @keyframes pulse{50%{opacity:.3}}
@@ -247,7 +248,25 @@ h2.q{font-size:clamp(21px,2.4vw,27px);line-height:1.2;letter-spacing:-.02em;font
 .dbtns span{padding:10px 16px;border-radius:6px;font-weight:600;font-size:14px}
 .dbtns .a{background:#0B63CE;color:#fff}.dbtns .b{border:1px solid var(--paper-line)}
 
-/* ---------- results ---------- */
+/* hero mosaic (CAM design): grid of cells with scattered blue / teal / olive / orange blocks and a clear centre */
+canvas.mosaic{position:absolute!important;left:0;top:0;width:100%;height:100%;z-index:0!important;pointer-events:none;display:block}
+.res-hero canvas.mosaic{height:100%}
+.intro::before,.res-hero::before,.cta::before{display:none}
+/* text-link CTA with the yellow triangle, like "Book a demo" on the CAM hero */
+.link{display:inline-flex;align-items:center;gap:10px;height:51px;padding:0 6px;font:600 16px/1.05 var(--display);letter-spacing:.32px;color:var(--fg);text-decoration:none;background:none;border:0}
+.link::before{content:"";border-left:7px solid var(--yellow);border-top:5px solid transparent;border-bottom:5px solid transparent;transition:transform .3s var(--slide)}
+.link:hover::before{transform:translateX(4px)}
+.link span{background:linear-gradient(currentColor,currentColor) 0 100%/0 1.5px no-repeat;transition:background-size .3s var(--slide);padding-bottom:2px}
+.link:hover span{background-size:100% 1.5px}
+/* button text wipe: dark label slides over the white one while the yellow nub grows (600ms, from the site's PrimaryButton) */
+.btn:not(.ghost):not(.sm) span.l::after{content:attr(data-t);position:absolute;inset:0;display:flex;align-items:center;color:#090D12;clip-path:inset(0 0 0 100%);transition:clip-path .3s var(--slide)}
+.btn:not(.ghost):not(.sm):hover span.l::after{clip-path:inset(0);transition-duration:.6s}
+.btn span.tab svg{transition:transform .65s cubic-bezier(.4,0,.2,1)}
+.btn:hover span.tab svg{transform:scale(.8)}
+.btn:not(.ghost):not(.sm):hover span.l{color:inherit}
+h1.title,.covered-h h2,.wk-tile h3,.cta h2,.ans h3,.block>h3,.weeks h4,.big,.inside b,.wkc .n,h2.q,.verdict h3{font-weight:430}
+h2.q{font-weight:500}.wk-tile h3,.weeks h4{font-weight:500}
+/* results */
 .res{padding-block:36px 80px}
 .res-hero{position:relative;text-align:center;padding:48px 0 40px;overflow:hidden}
 .res-hero::before{content:"";position:absolute;left:50%;top:-30%;width:min(900px,150vw);height:420px;transform:translateX(-50%);background:radial-gradient(closest-side,var(--glow),transparent);pointer-events:none}
@@ -331,13 +350,14 @@ h2.q{font-size:clamp(21px,2.4vw,27px);line-height:1.2;letter-spacing:-.02em;font
 <main>
 <!-- ============ INTRO ============ -->
 <section class="screen intro" id="s-intro">
+  <canvas class="mosaic" aria-hidden="true"></canvas>
   <div class="pips-hero" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
   <div class="eyebrow mono"><b>Adaptive Security</b> / Cybersecurity Awareness Month Challenge</div>
   <h1 class="title">Awareness <em>Arcade</em></h1>
   <p class="lede">A quick quiz on what you would have learned from Adaptive&rsquo;s Cybersecurity Awareness Month training content. <b>Two questions for each week:</b> AI phishing, deepfakes, targeted attacks and shadow AI, plus two on the whole month.</p>
   <div class="ctas">
-    <button class="btn" id="startBtn"><span class="l">Play now</span><span class="tab" aria-hidden="true">&rarr;</span></button>
-    <a class="btn ghost" href="https://www.adaptivesecurity.com/cybersecurity-awareness-month" target="_blank" rel="noopener"><span class="l">Get the free toolkit</span></a>
+    <button class="btn" id="startBtn"><span class="l">Play now</span><span class="tab" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></button>
+    <a class="link" href="https://www.adaptivesecurity.com/cybersecurity-awareness-month" target="_blank" rel="noopener"><span>Get the free toolkit</span></a>
   </div>
   <div class="meta mono"><span>10 questions</span><span>&middot;</span><span>About 5 minutes</span></div>
 
@@ -374,13 +394,14 @@ h2.q{font-size:clamp(21px,2.4vw,27px);line-height:1.2;letter-spacing:-.02em;font
 <!-- ============ RESULTS ============ -->
 <section class="screen res wrap" id="s-res" hidden>
   <div class="res-hero">
+    <canvas class="mosaic" aria-hidden="true"></canvas>
     <div class="mono dim">Final score</div>
     <div class="big"><span id="rScore">0</span><small id="rTotal">/10</small></div>
     <div class="rank" id="rRank"></div>
     <p class="rank-sub" id="rSub"></p>
     <div class="pips sq" id="sq" style="justify-content:center;margin:0 auto 22px"></div>
     <div class="actions">
-      <button class="btn sm" id="copyBtn"><span class="l">Copy my score</span><span class="tab" aria-hidden="true">&#10697;</span></button>
+      <button class="btn sm" id="copyBtn"><span class="l">Copy my score</span><span class="tab" aria-hidden="true"></span></button>
       <button class="btn sm ghost" id="againBtn"><span class="l">Play again</span></button>
     </div>
   </div>
@@ -398,8 +419,8 @@ h2.q{font-size:clamp(21px,2.4vw,27px);line-height:1.2;letter-spacing:-.02em;font
     <h2>Run it with your own team.</h2>
     <p class="sub">The full four-week campaign is free to download and available all at once, so you can start any week in any month. Employees learn to verify unusual requests, to question a familiar face or voice, and to think twice about what they paste into an AI tool.</p>
     <div class="ctas" style="justify-content:flex-start">
-      <a class="btn" id="dlBtn" href="https://www.adaptivesecurity.com/cybersecurity-awareness-month" target="_blank" rel="noopener"><span class="l">Download the free toolkit</span><span class="tab" aria-hidden="true">&rarr;</span></a>
-      <a class="btn ghost" id="demoBtn" href="https://www.adaptivesecurity.com/demo" target="_blank" rel="noopener"><span class="l">See it in Adaptive</span></a>
+      <a class="btn" id="dlBtn" href="https://www.adaptivesecurity.com/cybersecurity-awareness-month" target="_blank" rel="noopener"><span class="l">Download the free toolkit</span><span class="tab" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M15 17.88v.45V11.67" stroke="currentColor" stroke-width="1.67" stroke-linecap="square"/><path d="M12.08 15.42 15 18.33l2.92-2.91" stroke="currentColor" stroke-width="1.67" stroke-linecap="square"/><path d="M11.18 4.17h7.99v6.66h-1.67v-5H10.49L7.99 3.33H2.5v12.5h6.46l1.67 1.67H.83V1.67h7.85l2.5 2.5Z" fill="currentColor"/></svg></span></a>
+      <a class="link" id="demoBtn" href="https://www.adaptivesecurity.com/demo" target="_blank" rel="noopener"><span>See it in Adaptive</span></a>
     </div>
   </div>
 
@@ -634,8 +655,9 @@ const rankFor=sc=>RANKS.find(r=>sc/ROUNDS.length<=r.max);
 const $=s=>document.querySelector(s);
 const state={i:0,score:0,results:[],locked:false,order:[]};
 const esc=s=>s;
-function show(id){document.querySelectorAll('.screen').forEach(e=>e.hidden=e.id!==id);window.scrollTo(0,0);rise(id)}
-function rise(id){if(id==='s-play')return;[...document.querySelectorAll('#'+id+' > *')].forEach((el,i)=>{el.style.setProperty('--i',i);el.classList.remove('rise');void el.offsetWidth;el.classList.add('rise')})}
+function show(id){document.querySelectorAll('.screen').forEach(e=>e.hidden=e.id!==id);window.scrollTo(0,0);rise(id);if(typeof startMosaics==='function'){requestAnimationFrame(startMosaics);setTimeout(startMosaics,900)}}
+function labelBtns(){document.querySelectorAll('.btn span.l').forEach(e=>{e.dataset.t=e.textContent})}
+function rise(id){labelBtns();if(id==='s-play')return;[...document.querySelectorAll('#'+id+' > *')].forEach((el,i)=>{el.style.setProperty('--i',i);el.classList.remove('rise');void el.offsetWidth;el.classList.add('rise')})}
 function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(toast.h);toast.h=setTimeout(()=>t.classList.remove('on'),2200)}
 function shuffle(a){const r=a.slice();for(let i=r.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[r[i],r[j]]=[r[j],r[i]]}return r}
 const pad=n=>String(n).padStart(2,'0');
@@ -691,6 +713,7 @@ function choose(oi){
   $('#after').innerHTML=`
    <div class="sec why reveal"><h4 class="mono">Why</h4><p>${r.why}</p><span class="src mono"><i></i>${r.src}</span></div>`;
   $('#nextSlot').innerHTML=`<div class="nextrow reveal"><button class="btn" id="nextBtn" style="width:100%"><span class="l">${last?'See my score':'Next round'} <span class="kbd">N</span></span><span class="tab" aria-hidden="true">&rarr;</span></button></div>`;
+  labelBtns();
   $('#nextBtn').addEventListener('click',next);
   $('#nextBtn').focus({preventScroll:true});
   const first=document.querySelector('#stage [data-tell]');
@@ -717,9 +740,79 @@ function finish(){
 
 function start(){state.i=0;state.score=0;state.results=[];show('s-play');renderRound()}
 
+
+/* ============ MOSAIC (CAM hero) ============ */
+function initMosaic(cv,opt){
+  const ctx=cv.getContext('2d'); const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const B1=['#A9CDF4','#7FB1EA'],B2=['#BBD8F7','#8DBBEF'];
+  const PAL=[B1,B1,B1,B2,B2,B2,['#3C8A84','#2B6C67'],['#A9B05C','#8A9140'],['#C5654B','#A44C36'],['#3F5E49','#2E4A38']];
+  let W=0,H=0,C=0,cols=0,rows=0,cells=[],raf=0,vis=true,last=0,dpr=1;
+  function rng(seed){return()=>(seed=(seed*1664525+1013904223)>>>0)/4294967296}
+  function clearBox(r0){
+    // union of the hero content rects, in canvas coordinates
+    if(opt.fixedW){const w=Math.min(opt.fixedW,r0.width*.42);return {x0:r0.width/2-w,x1:r0.width/2+w,y0:-60,y1:r0.height+60}}
+    let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;
+    document.querySelectorAll(opt.clear).forEach(el=>{const r=el.getBoundingClientRect(); if(!r.width)return; x0=Math.min(x0,r.left-r0.left);y0=Math.min(y0,r.top-r0.top);x1=Math.max(x1,r.right-r0.left);y1=Math.max(y1,r.bottom-r0.top)});
+    return {x0:x0-48,y0:y0-34,x1:x1+48,y1:y1+34};
+  }
+  function build(){
+    const host=cv.parentElement; const stop=opt.stop&&document.querySelector(opt.stop);
+    cv.style.height=''; if(stop){ cv.style.height=Math.max(300,stop.offsetTop-24)+'px' }
+    const r=cv.getBoundingClientRect(); W=Math.max(1,r.width); H=Math.max(1,r.height); dpr=Math.min(devicePixelRatio||1,2);
+    cv.width=W*dpr; cv.height=H*dpr; ctx.setTransform(dpr,0,0,dpr,0,0);
+    C=W<600?18:24; cols=Math.ceil(W/C); rows=Math.ceil(H/C); cells=[];
+    const rand=rng(opt.seed||7); const box=clearBox(r);
+    const jx=[],jy=[],N=Math.max(cols,rows)+1; for(let i=0;i<N;i++){jx[i]=Math.round((rand()-.5)*3);jy[i]=Math.round((rand()-.5)*3)}
+    for(let y=0;y<rows;y++)for(let x=0;x<cols;x++){
+      const px=(x+jx[y%jx.length]*.0)*C, py=y*C;
+      const inX=(x*C+C>box.x0+jx[y]*C)&&(x*C<box.x1+jx[y]*C), inY=(y*C+C>box.y0+jy[x]*C)&&(y*C<box.y1+jy[x]*C);
+      if(inX&&inY) continue;
+      const dx=Math.max(box.x0-(x*C+C),x*C-box.x1,0), dy=Math.max(box.y0-(y*C+C),y*C-box.y1,0);
+      const near=Math.hypot(dx,dy)/C; // cells from the clear zone
+      if(near>7&&rand()<.18+near*.02) continue;           // thin out far from the clear zone
+      if(rand()<.2+Math.max(0,.4-near*.05)*0) continue;
+      const accent=rand()<.10+Math.max(0,.10-near*.012);
+      cells.push({x,y,a:accent?1:0,t:accent?1:0,pal:PAL[(rand()*PAL.length)|0],stripe:rand()<.55});
+    }
+    draw();
+  }
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    const cs=getComputedStyle(document.documentElement); const base=cs.getPropertyValue('--mosaic-base').trim()||'#EDEFF2'; const line=cs.getPropertyValue('--mosaic-line').trim()||'rgba(9,13,18,.08)';
+    for(const c of cells){
+      const px=c.x*C, py=c.y*C;
+      ctx.fillStyle=base; ctx.fillRect(px,py,C,C);
+      if(c.a>.01){
+        ctx.globalAlpha=c.a; ctx.fillStyle=c.pal[0]; ctx.fillRect(px,py,C,C);
+        if(c.stripe){ctx.fillStyle=c.pal[1];const n=4,h=Math.max(2,C/9);for(let i=0;i<n;i++)ctx.fillRect(px+C*.14,py+C*.14+i*(C*.72/n),C*.72,h)}
+        ctx.globalAlpha=1;
+      }
+      ctx.strokeStyle=line; ctx.lineWidth=1; ctx.strokeRect(px+.5,py+.5,C-1,C-1);
+    }
+  }
+  function tick(t){
+    raf=requestAnimationFrame(tick); if(!vis||t-last<70) return; last=t;
+    let changed=false;
+    for(const c of cells){ if(c.a!==c.t){c.a+=Math.sign(c.t-c.a)*.14; if(Math.abs(c.t-c.a)<.14)c.a=c.t; changed=true} }
+    if(Math.random()<.5){ for(let k=0;k<2;k++){const c=cells[(Math.random()*cells.length)|0]; if(!c)continue; if(c.t===0){c.t=1;c.pal=PAL[(Math.random()*PAL.length)|0];c.stripe=Math.random()<.55}else c.t=0; changed=true} }
+    if(changed) draw();
+  }
+  build();
+  let rt; addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(build,150)});
+  matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change',draw);
+  new IntersectionObserver(e=>{vis=e[0].isIntersecting}).observe(cv);
+  if(!reduce) raf=requestAnimationFrame(tick);
+  return build;
+}
+const MOS=[{sel:'#s-intro canvas.mosaic',opt:{seed:11,clear:'#s-intro .pips-hero,#s-intro .eyebrow,#s-intro h1,#s-intro .lede,#s-intro .ctas,#s-intro .meta',stop:'#s-intro .covered'}},
+           {sel:'#s-res canvas.mosaic',opt:{seed:23,fixedW:330}}];
+const mosaicRefs={};
+function startMosaics(){MOS.forEach(m=>{const cv=document.querySelector(m.sel); if(!cv||!cv.offsetParent&&!cv.getClientRects().length) return; if(!mosaicRefs[m.sel]) mosaicRefs[m.sel]=initMosaic(cv,m.opt); else mosaicRefs[m.sel]()})}
+
 /* ============ WIRING ============ */
 $('#startBtn').addEventListener('click',start);
-rise('s-intro');
+rise('s-intro');startMosaics();
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{startMosaics();setTimeout(startMosaics,900)});
 $('#againBtn').addEventListener('click',start);
 $('#quitBtn').addEventListener('click',()=>show('s-intro'));
 $('#dlBtn').href=CONFIG.toolkitUrl;$('#demoBtn').href=CONFIG.demoUrl;
