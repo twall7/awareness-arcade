@@ -267,6 +267,19 @@ canvas.mosaic{position:absolute!important;left:0;top:0;width:100%;height:100%;z-
 .btn:not(.ghost):not(.sm):hover span.l{color:inherit}
 h1.title,.covered-h h2,.wk-tile h3,.cta h2,.ans h3,.block>h3,.weeks h4,.big,.inside b,.wkc .n,h2.q,.verdict h3{font-weight:430}
 h2.q{font-weight:500}.wk-tile h3,.weeks h4{font-weight:500}
+
+/* dark band like the CAM page: full-bleed midnight, light headline, stair-stepped mosaic on the right */
+body{overflow-x:clip}
+.block.kit{position:relative;overflow:hidden;background:#090D12;color:#fff;border-radius:0;margin:56px 0 0 -50vw;width:100vw;left:50%;padding:clamp(56px,8vw,104px) max(16px,calc(50vw - 590px))}
+.kit-in{position:relative;z-index:1;max-width:700px}
+.block.kit>.kit-in>h3{font-size:clamp(34px,5vw,60px);line-height:1.04;letter-spacing:-.02em;font-weight:420;margin:0 0 16px;color:#fff;text-wrap:balance}
+.block.kit>.kit-in>p{color:rgba(255,255,255,.7);opacity:1;margin:0 0 36px;font-size:clamp(16px,1.8vw,18px);max-width:46ch}
+.block.kit .inside{display:flex;flex-wrap:wrap;gap:0 20px}
+.block.kit .inside div{background:transparent;border:0;border-top:1px dashed rgba(255,255,255,.28);border-radius:0;padding:16px 0 0;min-width:0;flex:0 0 auto}
+.block.kit .inside b{font-size:46px;font-weight:430;color:#fff}
+.block.kit .inside span{color:rgba(255,255,255,.7);opacity:1;font-size:13px;white-space:nowrap;display:block;margin-top:4px}
+.block.kit canvas.mosaic{left:auto;right:0;top:0;width:min(52%,720px);height:100%}
+@media (max-width:760px){.block.kit canvas.mosaic{width:100%;height:55%;top:auto;bottom:0;opacity:.45}.block.kit .inside{gap:0 24px}.block.kit .inside div{min-width:84px;margin-bottom:12px}}
 /* results */
 .res{padding-block:36px 80px}
 .res-hero{position:relative;text-align:center;padding:48px 0 40px;overflow:hidden}
@@ -295,10 +308,6 @@ h2.q{font-weight:500}.wk-tile h3,.weeks h4{font-weight:500}
 .ans .rv{background:transparent;border-color:rgba(255,255,255,.2)}
 .ans .rv em{color:#fff;opacity:.6}
 .block{margin-top:56px}
-.block.kit{background:#090D12;color:#fff;border-radius:12px;padding:clamp(24px,4vw,48px)}
-.block.kit>p{color:#fff;opacity:.7}
-.block.kit .inside div{background:transparent;border-color:rgba(255,255,255,.2)}
-.block.kit .inside span{color:#fff;opacity:.7}
 .block>h3{font-size:clamp(26px,3.6vw,40px);font-weight:600;letter-spacing:-.03em;margin:0 0 6px}
 .block>p{color:var(--fg2);margin:0 0 22px;max-width:60ch}
 .inside{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
@@ -421,14 +430,17 @@ h2.q{font-weight:500}.wk-tile h3,.weeks h4{font-weight:500}
   </div>
 
   <div class="block kit">
-    <h3>What&rsquo;s in the free toolkit</h3>
-    <p>Videos, posters, newsletters, emails and a rollout guide for all four weeks. No account or purchase required.</p>
-    <div class="inside">
-      <div><b>12</b><span>Videos</span></div>
-      <div><b>16</b><span>Poster designs</span></div>
-      <div><b>4</b><span>Weekly newsletters</span></div>
-      <div><b>5</b><span>Email templates</span></div>
-      <div><b>1</b><span>Implementation guide</span></div>
+    <canvas class="mosaic" aria-hidden="true"></canvas>
+    <div class="kit-in">
+      <h3>What&rsquo;s in the free toolkit</h3>
+      <p>Videos, posters, newsletters, emails and a rollout guide for all four weeks. No account or purchase required.</p>
+      <div class="inside">
+        <div><b>12</b><span>Videos</span></div>
+        <div><b>16</b><span>Poster designs</span></div>
+        <div><b>4</b><span>Weekly newsletters</span></div>
+        <div><b>5</b><span>Email templates</span></div>
+        <div><b>1</b><span>Implementation guide</span></div>
+      </div>
     </div>
   </div>
 
@@ -728,6 +740,9 @@ function initMosaic(cv,opt){
   const ctx=cv.getContext('2d'); const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
   // palette sampled from the CAM mosaic: mostly light blues, a few deep blues, teal, olive, green, mauve
   const PAL=['#A6CEF5','#A6CEF5','#A6CEF5','#8FBBEE','#8FBBEE','#7FAEE6','#7FAEE6','#B5D6F7','#3B73C0','#4F8E8C','#A3AB5F','#93A04A','#52695A','#9585A6','#CFDCCB'];
+  const dark=opt.theme==='dark';
+  const DPAL=['#7FA6D6','#7FA6D6','#6B97CC','#8DB1DC','#8DB1DC','#3A8B86','#C5654B','#C48FA6'];
+  const P=dark?DPAL:PAL;
   let W=0,H=0,cw=0,ch=0,cols=0,rows=0,cells=[],raf=0,vis=true,last=0,dpr=1,grain=null;
   function rng(seed){return()=>(seed=(seed*1664525+1013904223)>>>0)/4294967296}
   function makeGrain(){const g=document.createElement('canvas');g.width=g.height=160;const x=g.getContext('2d');const d=x.createImageData(160,160);for(let k=0;k<d.data.length;k+=4){const v=120+Math.random()*120;d.data[k]=d.data[k+1]=d.data[k+2]=v;d.data[k+3]=Math.random()*38}x.putImageData(d,0,0);return g}
@@ -762,18 +777,19 @@ function initMosaic(cv,opt){
         const dx=Math.max(rc.x0-X1,X0-rc.x1,0), dy=Math.max(rc.y0-Y1,Y0-rc.y1,0); d=Math.min(d,Math.hypot(dx/cw,dy/ch*.6));
       }
       if(inside) continue;
+      if(opt.stairs){const t=(y+.5)/rows; if(x<cols*(.96-.96*Math.min(1,t*1.1))) continue;}
       // patchy: keep cells only where a smooth noise field is high, so whole areas stay bare background
       const nv=noise(x/5,y/1.6); const keep=nv>(.27-Math.min(.1,d*.01));
       const speck=rand()<.07;
       if(!keep&&!speck) continue;
       const accent=speck?rand()<.7:rand()<.2+Math.max(0,.14-d*.012);
-      cells.push({x,y,solo:!keep,a:accent?1:0,t:accent?1:0,col:PAL[(rand()*PAL.length)|0],kind:[0,0,1,1,1,2][(rand()*6)|0]});
+      cells.push({x,y,solo:!keep,a:accent?1:0,t:accent?1:0,col:P[(rand()*P.length)|0],kind:[0,0,1,1,1,2][(rand()*6)|0]});
     }
     draw();
   }
   function draw(){
     ctx.clearRect(0,0,W,H);
-    const cs=getComputedStyle(document.documentElement); const base=cs.getPropertyValue('--mosaic-base').trim()||'#EDEFF2'; const line=cs.getPropertyValue('--mosaic-line').trim()||'rgba(100,110,150,.2)';
+    const cs=getComputedStyle(document.documentElement); const base=dark?'rgba(255,255,255,.04)':(cs.getPropertyValue('--mosaic-base').trim()||'#EDEFF2'); const line=dark?'rgba(255,255,255,.1)':(cs.getPropertyValue('--mosaic-line').trim()||'rgba(100,110,150,.2)');
     ctx.fillStyle=base;
     for(const c of cells) if(!c.solo) ctx.fillRect(c.x*cw,c.y*ch,cw,ch);
     for(const c of cells){
@@ -783,14 +799,14 @@ function initMosaic(cv,opt){
         const n=7,hh=Math.max(2,ch/22); for(let k=0;k<n;k++){ctx.fillRect(px+cw*.08,py+ch*.07+k*(ch*.88/n),cw*.84,hh)}
       } else {
         ctx.fillRect(px,py,cw,ch);
-        if(c.kind===1){ctx.fillStyle=base;ctx.globalAlpha=c.a*.8;for(let k=1;k<5;k++)ctx.fillRect(px,py+k*ch/5-1,cw,2)}
+        if(c.kind===1){ctx.fillStyle=dark?'#090D12':base;ctx.globalAlpha=c.a*.8;for(let k=1;k<5;k++)ctx.fillRect(px,py+k*ch/5-1,cw,2)}
       }
       ctx.globalAlpha=1;
     }
     ctx.globalAlpha=1;
     // grain + hairlines
-    const pat=ctx.createPattern(grain,'repeat'); ctx.fillStyle=pat;
-    for(const c of cells) if(!c.solo||c.a>.01) ctx.fillRect(c.x*cw,c.y*ch,cw,ch);
+    if(!dark){const pat=ctx.createPattern(grain,'repeat'); ctx.fillStyle=pat;
+    for(const c of cells) if(!c.solo||c.a>.01) ctx.fillRect(c.x*cw,c.y*ch,cw,ch);}
     ctx.strokeStyle=line; ctx.lineWidth=1;
     for(const c of cells) if(!c.solo||c.a>.01) ctx.strokeRect(c.x*cw+.5,c.y*ch+.5,cw-1,ch-1);
   }
@@ -798,7 +814,7 @@ function initMosaic(cv,opt){
     raf=requestAnimationFrame(tick); if(!vis||t-last<80) return; last=t;
     let changed=false;
     for(const c of cells){ if(c.a!==c.t){c.a+=Math.sign(c.t-c.a)*.15; if(Math.abs(c.t-c.a)<.15)c.a=c.t; changed=true} }
-    if(Math.random()<.5){ for(let k=0;k<2;k++){const c=cells[(Math.random()*cells.length)|0]; if(!c)continue; if(c.t===0){c.t=1;c.col=PAL[(Math.random()*PAL.length)|0];c.kind=[0,0,1,1,1,2][(Math.random()*6)|0]}else c.t=0; changed=true} }
+    if(Math.random()<.5){ for(let k=0;k<2;k++){const c=cells[(Math.random()*cells.length)|0]; if(!c)continue; if(c.t===0){c.t=1;c.col=P[(Math.random()*P.length)|0];c.kind=[0,0,1,1,1,2][(Math.random()*6)|0]}else c.t=0; changed=true} }
     if(changed) draw();
   }
   build();
@@ -811,7 +827,8 @@ function initMosaic(cv,opt){
 const MOS=[{sel:'#s-intro canvas.mosaic',opt:{seed:11,stop:'#s-intro .covered',items:[
     {sel:'#s-intro .pips-hero',px:30,py:14},{sel:'#s-intro .eyebrow',text:1},{sel:'#s-intro h1',text:1,px:30,py:16},{sel:'#s-intro .lede',text:1},
     {sel:'#s-intro .ctas .btn,#s-intro .ctas .link',px:30,py:16}]}},
-  {sel:'#s-res canvas.mosaic',opt:{seed:23,items:[
+  {sel:'#s-res .kit canvas.mosaic',opt:{seed:5,theme:'dark',stairs:true,items:[]}},
+  {sel:'#s-res .res-hero canvas.mosaic',opt:{seed:23,items:[
     {sel:'#s-res .res-hero .mono.dim',text:1},{sel:'#s-res .big',text:1,px:34,py:14},{sel:'#s-res .rank',px:30,py:14},{sel:'#s-res .rank-sub',text:1},
     {sel:'#s-res #sq i',px:12,py:14},{sel:'#s-res .actions .btn',px:30,py:16}]}}];
 const mosaicRefs={};
