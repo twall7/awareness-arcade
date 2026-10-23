@@ -406,13 +406,7 @@ h2.q{font-weight:500}.wk-tile h3,.weeks h4{font-weight:500}
     </div>
   </div>
 
-  <div class="wkgrid" id="wkgrid"></div>
 
-  <div class="ans">
-    <h3>Your answers</h3>
-    <p>Each question, and where it&rsquo;s covered in the campaign.</p>
-    <div class="review" id="review"></div>
-  </div>
 
   <div class="cta">
     <span class="mono">Free toolkit</span>
@@ -436,16 +430,6 @@ h2.q{font-weight:500}.wk-tile h3,.weeks h4{font-weight:500}
     </div>
   </div>
 
-  <div class="block">
-    <h3>Four weeks, one topic each</h3>
-    <p>The free download is English and doesn&rsquo;t include the games. Adaptive customers also get the four interactive games, assignment and reporting, and 39 platform languages.</p>
-    <div class="weeks">
-      <article><span class="mono dim">Week 1</span><h4>AI Basics</h4><p>Employees learn why old phishing tells fail and which basics still work.</p><div class="game mono"><b>In Adaptive</b> AI-Powered Attacks Trivia</div></article>
-      <article><span class="mono dim">Week 2</span><h4>Deepfakes &amp; Impersonation</h4><p>Employees learn to verify a request instead of trusting a face or voice.</p><div class="game mono"><b>In Adaptive</b> Deepfake Detection Game Show</div></article>
-      <article><span class="mono dim">Week 3</span><h4>Targeted AI Attacks</h4><p>Employees see how public details become attack material.</p><div class="game mono"><b>In Adaptive</b> Talk Your Way In</div></article>
-      <article><span class="mono dim">Week 4</span><h4>Shadow AI &amp; Agents</h4><p>Employees learn which tools, data and permissions are safe to use with AI.</p><div class="game mono"><b>In Adaptive</b> Prompt Patrol</div></article>
-    </div>
-  </div>
 
   <div class="foot mono"><span>Adaptive Security &middot; Cybersecurity Awareness Month 2026</span></div>
 </section>
@@ -732,10 +716,6 @@ function finish(){
   const el=$('#rScore');let n=0;const tick=()=>{el.textContent=n;if(n<s){n++;setTimeout(tick,90)}};tick();
   $('#sq').innerHTML=ROUNDS.map((_,i)=>`<i class="${state.results[i]?'ok':'no'}"></i>`).join('');
   $('#rRank').textContent=rk.t;$('#rSub').textContent=rk.s;
-  const wks=[1,2,3,4,5].map(w=>{const idx=ROUNDS.map((r,i)=>r.week===w?i:-1).filter(i=>i>=0);return{w,name:ROUNDS[idx[0]].wk,idx,got:idx.filter(i=>state.results[i]).length}});
-  const worst=Math.min(...wks.map(x=>x.got));
-  $('#wkgrid').innerHTML=wks.map(x=>`<div class="wkc ${x.got===worst&&worst<2?'weak':''}"><span class="mono dim">${x.w===5?'Month recap':'Week '+x.w}</span><div class="n">${x.got}/${x.idx.length}</div><div class="p">${x.idx.map(i=>`<i class="${state.results[i]?'ok':'no'}"></i>`).join('')}</div><p>${x.name}${x.got===worst&&worst<2?'. Your soft spot.':''}</p></div>`).join('');
-  $('#review').innerHTML=ROUNDS.map((r,i)=>`<div class="rv"><span class="b ${state.results[i]?'ok':'no'}">${state.results[i]?'&#10003;':'&#10005;'}</span><span>${r.q.replace(/\?$/,'')}?</span><em class="mono">${r.src.split(' · ')[0].replace('Month recap','Recap')}</em></div>`).join('');
 }
 
 function start(){state.i=0;state.score=0;state.results=[];show('s-play');renderRound()}
