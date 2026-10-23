@@ -731,11 +731,16 @@ function initMosaic(cv,opt){
   let W=0,H=0,cw=0,ch=0,cols=0,rows=0,cells=[],raf=0,vis=true,last=0,dpr=1,grain=null;
   function rng(seed){return()=>(seed=(seed*1664525+1013904223)>>>0)/4294967296}
   function makeGrain(){const g=document.createElement('canvas');g.width=g.height=160;const x=g.getContext('2d');const d=x.createImageData(160,160);for(let k=0;k<d.data.length;k+=4){const v=120+Math.random()*120;d.data[k]=d.data[k+1]=d.data[k+2]=v;d.data[k+3]=Math.random()*38}x.putImageData(d,0,0);return g}
-  function clearBox(r0){
-    if(opt.fixedW){const w=Math.min(opt.fixedW,r0.width*.42);return {x0:r0.width/2-w,x1:r0.width/2+w,y0:-60,y1:r0.height+60}}
-    let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;
-    document.querySelectorAll(opt.clear).forEach(el=>{const r=el.getBoundingClientRect(); if(!r.width)return; x0=Math.min(x0,r.left-r0.left);y0=Math.min(y0,r.top-r0.top);x1=Math.max(x1,r.right-r0.left);y1=Math.max(y1,r.bottom-r0.top)});
-    return {x0:x0-48,y0:y0-30,x1:x1+48,y1:y1+30};
+  // Clear ground follows the real text lines and buttons (not one big box), so the pattern wraps in around them
+  function clearRects(r0){
+    const out=[]; const add=(rc,px,py)=>{ if(rc.width>0&&rc.height>0) out.push({x0:rc.left-r0.left-px,y0:rc.top-r0.top-py,x1:rc.right-r0.left+px,y1:rc.bottom-r0.top+py}) };
+    for(const it of opt.items){
+      document.querySelectorAll(it.sel).forEach(el=>{
+        if(it.text){ const rg=document.createRange(); rg.selectNodeContents(el); [...rg.getClientRects()].forEach(rc=>add(rc,it.px??26,it.py??10)) }
+        else add(el.getBoundingClientRect(),it.px??26,it.py??12);
+      });
+    }
+    return out;
   }
   function build(){
     const stop=opt.stop&&document.querySelector(opt.stop);
@@ -744,16 +749,18 @@ function initMosaic(cv,opt){
     cv.width=W*dpr; cv.height=H*dpr; ctx.setTransform(dpr,0,0,dpr,0,0);
     // tall, narrow cells: about 1 wide to 3 tall, like the CAM design
     cw=W<600?15:Math.max(18,Math.round(W/46)); ch=cw*3; cols=Math.ceil(W/cw); rows=Math.ceil(H/ch); cells=[]; grain=grain||makeGrain();
-    const rand=rng(opt.seed||7); const box=clearBox(r);
-    const N=Math.max(cols,rows)+8, jx=[],jy=[]; for(let i=0;i<N;i++){jx[i]=Math.round(rand()*4);jy[i]=Math.round(rand()*1.4)}
+    const rand=rng(opt.seed||7); const rects=clearRects(r);
+    const N=Math.max(cols,rows)+8, jx=[]; for(let i=0;i<N;i++) jx[i]=Math.round(rand()*3);
     for(let y=0;y<rows;y++)for(let x=0;x<cols;x++){
-      const bx0=box.x0-jx[y]*cw, bx1=box.x1+jx[y+3]*cw, by0=box.y0-jy[x]*ch, by1=box.y1+jy[x+5]*ch; // edges only ever grow, so text always sits on clear ground
-      const inside=(x*cw+cw>bx0)&&(x*cw<bx1)&&(y*ch+ch>by0)&&(y*ch<by1);
+      const X0=x*cw, X1=X0+cw, Y0=y*ch, Y1=Y0+ch; let inside=false, d=1e9;
+      for(const rc of rects){
+        const ex=jx[(y*7+x)%N]*cw*.5; // ragged outward bite so the edge isn't a clean line
+        if(X1>rc.x0-ex&&X0<rc.x1+ex&&Y1>rc.y0&&Y0<rc.y1){inside=true;break}
+        const dx=Math.max(rc.x0-X1,X0-rc.x1,0), dy=Math.max(rc.y0-Y1,Y0-rc.y1,0); d=Math.min(d,Math.hypot(dx/cw,dy/ch*.6));
+      }
       if(inside) continue;
-      const dx=Math.max(bx0-(x*cw+cw),x*cw-bx1,0), dy=Math.max(by0-(y*ch+ch),y*ch-by1,0);
-      const near=Math.hypot(dx/cw,dy/ch*.6); // distance from the clear zone, in cells
-      const dens=Math.max(.12,.95-near*.05); if(rand()>dens) continue;
-      const accent=rand()<.11+Math.max(0,.16-near*.012);
+      const dens=Math.max(.3,.95-d*.04); if(rand()>dens) continue;
+      const accent=rand()<.11+Math.max(0,.16-d*.012);
       cells.push({x,y,a:accent?1:0,t:accent?1:0,col:PAL[(rand()*PAL.length)|0],kind:[0,0,1,1,1,2][(rand()*6)|0]});
     }
     draw();
@@ -795,8 +802,12 @@ function initMosaic(cv,opt){
   if(!reduce) raf=requestAnimationFrame(tick);
   return build;
 }
-const MOS=[{sel:'#s-intro canvas.mosaic',opt:{seed:11,clear:'#s-intro .pips-hero,#s-intro .eyebrow,#s-intro h1,#s-intro .lede,#s-intro .ctas,#s-intro .meta',stop:'#s-intro .covered'}},
-           {sel:'#s-res canvas.mosaic',opt:{seed:23,fixedW:330}}];
+const MOS=[{sel:'#s-intro canvas.mosaic',opt:{seed:11,stop:'#s-intro .covered',items:[
+    {sel:'#s-intro .pips-hero',px:30,py:14},{sel:'#s-intro .eyebrow',text:1},{sel:'#s-intro h1',text:1,px:30,py:16},{sel:'#s-intro .lede',text:1},
+    {sel:'#s-intro .ctas .btn,#s-intro .ctas .link',px:30,py:16}]}},
+  {sel:'#s-res canvas.mosaic',opt:{seed:23,items:[
+    {sel:'#s-res .res-hero .mono.dim',text:1},{sel:'#s-res .big',text:1,px:34,py:14},{sel:'#s-res .rank',px:30,py:14},{sel:'#s-res .rank-sub',text:1},
+    {sel:'#s-res #sq i',px:12,py:14},{sel:'#s-res .actions .btn',px:30,py:16}]}}];
 const mosaicRefs={};
 function startMosaics(){MOS.forEach(m=>{const cv=document.querySelector(m.sel); if(!cv||!cv.offsetParent&&!cv.getClientRects().length) return; if(!mosaicRefs[m.sel]) mosaicRefs[m.sel]=initMosaic(cv,m.opt); else mosaicRefs[m.sel]()})}
 
