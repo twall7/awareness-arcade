@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Test yourself on Adaptive's Cybersecurity Awareness Month training content.">
+<meta name="description" content="Test yourself on Adaptive's Cybersecurity Awareness Month training content in this quick 4-5 minute quiz.">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Awareness Arcade by Adaptive Security">
-<meta property="og:description" content="Test yourself on Adaptive's Cybersecurity Awareness Month training content.">
+<meta property="og:description" content="Test yourself on Adaptive's Cybersecurity Awareness Month training content in this quick 4-5 minute quiz.">
 <meta property="og:url" content="https://awareness-arcade.vercel.app/">
 <meta name="twitter:card" content="summary_large_image">
 <title>Awareness Arcade</title>
@@ -356,7 +356,7 @@ h2.q{font-weight:500}.wk-tile h3,.weeks h4{font-weight:500}
   <div class="pips-hero" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
   <div class="eyebrow mono"><b>Adaptive Security</b> / Cybersecurity Awareness Month Challenge</div>
   <h1 class="title">Awareness <em>Arcade</em></h1>
-  <p class="lede">Test yourself on Adaptive&rsquo;s Cybersecurity Awareness Month training content!</p>
+  <p class="lede">Test yourself on Adaptive&rsquo;s Cybersecurity Awareness Month training content in this quick 4&ndash;5 minute quiz!</p>
   <div class="ctas">
     <button class="btn" id="startBtn"><span class="l">Play now</span><span class="tab" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></button>
     <a class="link" href="https://www.adaptivesecurity.com/cybersecurity-awareness-month" target="_blank" rel="noopener"><span>Get the free toolkit</span></a>
@@ -735,7 +735,7 @@ function initMosaic(cv,opt){
     if(opt.fixedW){const w=Math.min(opt.fixedW,r0.width*.42);return {x0:r0.width/2-w,x1:r0.width/2+w,y0:-60,y1:r0.height+60}}
     let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;
     document.querySelectorAll(opt.clear).forEach(el=>{const r=el.getBoundingClientRect(); if(!r.width)return; x0=Math.min(x0,r.left-r0.left);y0=Math.min(y0,r.top-r0.top);x1=Math.max(x1,r.right-r0.left);y1=Math.max(y1,r.bottom-r0.top)});
-    return {x0:x0-48,y0:y0-34,x1:x1+48,y1:y1+34};
+    return {x0:x0-48,y0:y0-30,x1:x1+48,y1:y1+30};
   }
   function build(){
     const stop=opt.stop&&document.querySelector(opt.stop);
@@ -745,9 +745,9 @@ function initMosaic(cv,opt){
     // tall, narrow cells: about 1 wide to 3 tall, like the CAM design
     cw=W<600?15:Math.max(18,Math.round(W/46)); ch=cw*3; cols=Math.ceil(W/cw); rows=Math.ceil(H/ch); cells=[]; grain=grain||makeGrain();
     const rand=rng(opt.seed||7); const box=clearBox(r);
-    const N=Math.max(cols,rows)+2, jx=[],jy=[]; for(let i=0;i<N;i++){jx[i]=Math.round((rand()-.5)*5);jy[i]=Math.round((rand()-.5)*2)}
+    const N=Math.max(cols,rows)+8, jx=[],jy=[]; for(let i=0;i<N;i++){jx[i]=Math.round(rand()*4);jy[i]=Math.round(rand()*1.4)}
     for(let y=0;y<rows;y++)for(let x=0;x<cols;x++){
-      const bx0=box.x0+jx[y]*cw, bx1=box.x1+jx[y]*cw, by0=box.y0+jy[x]*ch, by1=box.y1+jy[x]*ch;
+      const bx0=box.x0-jx[y]*cw, bx1=box.x1+jx[y+3]*cw, by0=box.y0-jy[x]*ch, by1=box.y1+jy[x+5]*ch; // edges only ever grow, so text always sits on clear ground
       const inside=(x*cw+cw>bx0)&&(x*cw<bx1)&&(y*ch+ch>by0)&&(y*ch<by1);
       if(inside) continue;
       const dx=Math.max(bx0-(x*cw+cw),x*cw-bx1,0), dy=Math.max(by0-(y*ch+ch),y*ch-by1,0);
