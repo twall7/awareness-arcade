@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Test yourself on Adaptive's Cybersecurity Awareness Month training content. About 5 minutes.">
+<meta name="description" content="Test yourself on Adaptive's Cybersecurity Awareness Month training content.">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Awareness Arcade by Adaptive Security">
-<meta property="og:description" content="Test yourself on Adaptive's Cybersecurity Awareness Month training content. About 5 minutes.">
+<meta property="og:description" content="Test yourself on Adaptive's Cybersecurity Awareness Month training content.">
 <meta property="og:url" content="https://awareness-arcade.vercel.app/">
 <meta name="twitter:card" content="summary_large_image">
 <title>Awareness Arcade</title>
@@ -71,7 +71,7 @@ h1,h2,h3,h4,.big,.rank,.btn,.brand,.verdict h3,.inside b,.wkc .n,.opts.two .opt{
 
 /* ---------- intro ---------- */
 .intro{position:relative;display:flex;flex-direction:column;justify-content:flex-start;align-items:center;text-align:center;padding-block:0 56px;overflow:hidden}
-.hero{width:100%;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;justify-content:center;align-items:center;padding-block:96px 72px}
+.hero{width:100%;min-height:max(500px,calc(100vh - 170px));min-height:max(500px,calc(100dvh - 170px));display:flex;flex-direction:column;justify-content:center;align-items:center;padding-block:72px 56px}
 .intro::before{content:"";position:absolute;left:50%;top:-6%;width:min(1100px,160vw);height:560px;transform:translateX(-50%);
   background:radial-gradient(closest-side,var(--glow),transparent);pointer-events:none;filter:blur(10px)}
 .intro>*{position:relative;z-index:1}
@@ -92,7 +92,7 @@ h1.title em{font-style:normal;color:var(--muted);opacity:.8}
 @keyframes pulse{50%{opacity:.3}}
 
 /* what's covered: open layout, CAM week icons, dashed dividers like the CAM page week tabs */
-.covered{width:100%;max-width:1100px;margin-top:80px;text-align:left}
+.covered{width:100%;max-width:1100px;margin-top:48px;text-align:left}
 .covered-h{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:8px}
 .covered-h h2{margin:0;font-size:clamp(26px,3.6vw,38px);font-weight:600;letter-spacing:-.03em}
 .covered-h .mono{color:var(--muted)}
@@ -361,7 +361,6 @@ h2.q{font-weight:500}.wk-tile h3,.weeks h4{font-weight:500}
     <button class="btn" id="startBtn"><span class="l">Play now</span><span class="tab" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></button>
     <a class="link" href="https://www.adaptivesecurity.com/cybersecurity-awareness-month" target="_blank" rel="noopener"><span>Get the free toolkit</span></a>
   </div>
-  <div class="meta mono"><span>About 5 minutes</span></div>
   </div>
 
   <div class="covered">
