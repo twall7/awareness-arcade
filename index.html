@@ -763,8 +763,8 @@ function initMosaic(cv,opt){
       }
       if(inside) continue;
       // patchy: keep cells only where a smooth noise field is high, so whole areas stay bare background
-      const nv=noise(x/5,y/1.6); const keep=nv>(.38-Math.min(.1,d*.01));
-      const speck=rand()<.05;
+      const nv=noise(x/5,y/1.6); const keep=nv>(.27-Math.min(.1,d*.01));
+      const speck=rand()<.07;
       if(!keep&&!speck) continue;
       const accent=speck?rand()<.7:rand()<.2+Math.max(0,.14-d*.012);
       cells.push({x,y,solo:!keep,a:accent?1:0,t:accent?1:0,col:PAL[(rand()*PAL.length)|0],kind:[0,0,1,1,1,2][(rand()*6)|0]});
